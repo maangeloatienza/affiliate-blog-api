@@ -14,7 +14,7 @@ const reqBody = {
   content: '',
   author_id: ''
 };
-
+ 
 const optBody = {
   _title: '',
   _excerpt : '',
