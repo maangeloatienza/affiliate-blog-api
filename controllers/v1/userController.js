@@ -13,7 +13,6 @@ const reqBody = {
     last_name: '',
     email: '',
     password: '',
-    phone_number: ''
 };
 
 const optBody = {
@@ -21,8 +20,7 @@ const optBody = {
     _first_name: '',
     _last_name: '',
     _email: '',
-    _password: '',
-    _phone_number: ''
+    _password: ''
 };
 
 

@@ -16,10 +16,10 @@ router.put ('/users/:id',   authorization,  __.userController.update);
 router.delete('/users/:id', authorization,  __.userController.remove);
 
 router.get ('/images',                      __.imageController.index);
-router.get ('/imges/:id',                   __.imageController.show);
-router.post('/imgaes',upload.single('file'),__.imageController.store);
-router.put ('/imgaes/:id',upload.single('file'), __.imageController.update);
-router.delete('/imgaes/:id', authorization, __.imageController.remove);
+router.get ('/images/:id',                   __.imageController.show);
+router.post('/images',upload.single('file'),__.imageController.store);
+router.put ('/images/:id',upload.single('file'), __.imageController.update);
+router.delete('/images/:id', authorization, __.imageController.remove);
 
 router.get ('/blogs',                       __.blogController.index);
 router.get ('/blogs/:id',                   __.blogController.show);

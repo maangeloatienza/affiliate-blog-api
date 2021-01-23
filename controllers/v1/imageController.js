@@ -3,10 +3,17 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const util = require('./../../utils/util');
 const Global = require('./../../global_functions');
+
 const Blog = require('./../../models/blog.model');
 const Image = require('./../../models/image.model');
 
-let cloudinary = require('cloudinary').v2;
+
+require('dotenv').config();
+require('./../../misc/response_codes');
+
+
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier')
 
 cloudinary.config({
   cloud_name  : process.env.CLOUD_NAME,
@@ -14,14 +21,9 @@ cloudinary.config({
   api_secret  : process.env.API_SECRET
 });
 
-require('dotenv').config();
-require('./../../misc/response_codes');
-
 const reqBody = {
   name: '',
-  image: '',
-  content: '',
-  author_id: ''
+  _image: ''
 };
 
 const optBody = {
@@ -42,7 +44,7 @@ const index = (req,res,next)=> {
         sort_id
     } = req.query;
 
-    let where = ` WHERE blog.deleted IS null  `;
+    let where = ` WHERE image.deleted IS null  `;
 
     if (sort_id) {
         where += `
@@ -51,25 +53,22 @@ const index = (req,res,next)=> {
     }
 
     if (name) {
-      where += `
-          AND blog.title LIKE '%${search}%' \
-          OR  user.first_name LIKE '%${search}%' \
-          OR  user.last_name LIKE '%${search}%' \
-      `;
+        where += `
+            OR  image.name LIKE '%${search}%' \
+        `;
   }
 
     if (search) {
         where += `
-            AND blog.title LIKE '%${search}%' \
-            OR  user.first_name LIKE '%${search}%' \
-            OR  user.last_name LIKE '%${search}%' \
+            AND image.name LIKE '%${search}%' \
+            OR  image.image LIKE '%${search}%' \
         `;
     }
 
     
     let count = 0;
 
-    Blog.count({
+    Image.count({
         where,
         offset,
         result : (err,data) => {
@@ -77,7 +76,7 @@ const index = (req,res,next)=> {
         }
     });
 
-    Blog.index({
+    Image.index({
         where,
         offset,
         result: (err, data)=> {
@@ -91,7 +90,7 @@ const index = (req,res,next)=> {
                 count,
                 page,
                 limit,
-                message: data.length ? 'Sucessfully retrieved blog posts' : NO_RESULTS
+                message: data.length ? 'Sucessfully retrieved images' : NO_RESULTS
             }, data.length ? 200 : 404);
         }
     });
@@ -115,45 +114,50 @@ const show = (req, res, next) => {
     });
 }
 
-const store = (req,res,next) => {
+const store = async (req,res,next) => {
     const data =
         util._get
             .form_data(reqBody)
             .from(req.body);
+    let file = '';
 
     if(data instanceof Error){
-        Global.fail(res,{
+        return Global.fail(res,{
             message: INV_INPUT,
-            context: INV_INPUT
+            context: data.message
         },500);
     }
+
 
     data.id = uuidv4();
     data.created = new Date();
 
     if(req.file){
-      file = req.file.path
 
-      let temp_holder = await cloudinary.uploader.upload(
-          file,
-          {
-              public_id : file,
-              tags : 'uploads'
-          },
-          (error,image)=>{
-              if(err){
-                  return Global.fail(res,{
-                      message : "Error uploading to cloudinary",
-                      context : error
-                  },500);
-              }
+        file = req.file.path
+        // let revFile = file.replace(/\/\//g, "$1")
+        let revFile = `${req.file.destination}${req.file.filename}`
+        console.log(revFile)
+        let temp_holder = await cloudinary.uploader.upload(
+            revFile,
+            {
+                public_id : revFile,
+                tags : 'uploads'
+            },
+            (error,image)=>{
+                if(error){
+                    return Global.fail(res,{
+                        message : "Error uploading to cloudinary",
+                        context : error
+                    },500);
+                }
 
-              return image;
+                return image;
 
-          }
-      );
+            }
+        );
 
-    data.image =temp_holder? temp_holder.url : null;
+    data.image = temp_holder? temp_holder.url : null;
     }
 
     Image.store({
@@ -165,7 +169,7 @@ const store = (req,res,next) => {
 
           else Global.success(res, {
               data,
-              message: data ? 'Sucessfully created user' : FAILED_TO_CREATE
+              message: data ? 'Sucessfully created blog' : FAILED_TO_CREATE
           }, data ? 200 : 400);
       }
   })

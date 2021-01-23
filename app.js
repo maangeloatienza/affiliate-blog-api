@@ -17,7 +17,8 @@ let configurationSetting = {
 SetupDB.connect(configurationSetting);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: false, parameterLimit: 50000, type: '*/x-www-form-urlencoded' }));
+// app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000, type: '*/x-www-form-urlencoded' }));
+app.use(bodyParser.urlencoded({ extended:true}));
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');

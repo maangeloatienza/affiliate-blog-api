@@ -14,8 +14,6 @@ User.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
             username, \
             password, \
             email, \
-            phone_number, \
-            name AS role, \
             user.created, \
             user.updated, \
             user.deleted \

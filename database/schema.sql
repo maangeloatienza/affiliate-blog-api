@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS create_express_mysql_db;
+CREATE DATABASE IF NOT EXISTS affiliate_blog_db;
 
-ALTER DATABASE create_express_mysql_db CHARACTER SET utf32 COLLATE utf32_general_ci;
+ALTER DATABASE affiliate_blog_db CHARACTER SET utf32 COLLATE utf32_general_ci;
 
-USE create_express_mysql_db;
+USE affiliate_blog_db;
 
 CREATE TABLE IF NOT EXISTS roles (
   `id` VARCHAR(64) NOT NULL PRIMARY KEY,
