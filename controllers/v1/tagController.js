@@ -3,31 +3,19 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const util = require('./../../utils/util');
 const Global = require('./../../global_functions');
-const Blog = require('./../../models/blog.model');
+const Tag = require('./../../models/tag.model');
 
 require('./../../misc/response_codes');
 
 const reqBody = {
-  title: '',
-  excerpt : '',
-  image: '',
-  tag_id: '',
-  content: '',
-  author_id: '',
-  isAvailable: 0,
-  isFeatured : 0
+  tag: ''
 };
  
 const optBody = {
-  _title: '',
-  _excerpt : '',
-  _image: '',
-  _tag_id: '',
-  _content: '',
-  _author_id: '',
-  _isAvailable: 0,
-  _isFeatured : 0
+  _tag: ''
 };
+
+
 
 const index = (req,res,next)=> {
 
@@ -35,17 +23,13 @@ const index = (req,res,next)=> {
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = `LIMIT ${(page - 1) * limit}, ${limit}`;
     const {
-        title,
-        author,
         tag,
-        isAvailable,
-        isFeatured,
         search,
-        sort_desc,
-        sort_id
+        sort_id,
+        sort_desc
     } = req.query;
 
-    let where = ` WHERE blog.deleted IS null  `;
+    let where = ` WHERE tag.deleted IS null  `;
 
     if (sort_id) {
         where += `
@@ -53,37 +37,22 @@ const index = (req,res,next)=> {
         `;
     }
 
-    if (isAvailable) {
-        where += `
-            AND blog.isAvailable IS ${isAvailable}
-        `
-    }
-
-    if (isFeatured) {
-        where += `
-            AND blog.isFeatured IS ${isFeatured}
-        `
-    }
-
     if (tag) {
         where += `
-            AND tag.tag IS ${tag}
+            AND tag.tag LIKE '%${tag}%' \
         `
     }
 
     if (search) {
         where += `
-            AND blog.title LIKE '%${search}%' \
-            OR  user.first_name LIKE '%${search}%' \
-            OR  user.last_name LIKE '%${search}%' \
-            OR  tag.tag LIKE '%${search}%' \
+            AND tag.tag LIKE '%${search}%' \
         `;
     }
 
     
     let count = 0;
 
-    Blog.count({
+    Tag.count({
         where,
         offset,
         result : (err,data) => {
@@ -91,7 +60,7 @@ const index = (req,res,next)=> {
         }
     });
 
-    Blog.index({
+    Tag.index({
         where,
         offset,
         result: (err, data)=> {
@@ -105,7 +74,7 @@ const index = (req,res,next)=> {
                 count,
                 page,
                 limit,
-                message: data.length ? 'Sucessfully retrieved blog posts' : NO_RESULTS
+                message: data.length ? 'Sucessfully retrieved tags' : NO_RESULTS
             }, data.length ? 200 : 404);
         }
     });
@@ -114,7 +83,7 @@ const index = (req,res,next)=> {
 const show = (req, res, next) => {
     let id = req.params.id;
     
-    Blog.show({
+    Tag.show({
         id,
         result: (err, data) => {
             if (err) Global.fail(res, {
@@ -123,7 +92,7 @@ const show = (req, res, next) => {
 
             else Global.success(res, {
                 data,
-                message: data ? 'Sucessfully retrieved blogs' : NO_RESULTS
+                message: data ? 'Sucessfully retrieved tags' : NO_RESULTS
             }, data?200:404);
         }
     });
@@ -145,7 +114,7 @@ const store = (req,res,next) => {
     data.id = uuidv4();
     data.created = new Date();
 
-    Blog.store({
+    Tag.store({
       body: data,
       result: (err, data)=> {
             if (err) Global.fail(res, {
@@ -154,7 +123,7 @@ const store = (req,res,next) => {
 
             else Global.success(res, {
                 data,
-                message: data ? 'Sucessfully created blogs' : FAILED_TO_CREATE
+                message: data ? 'Sucessfully created tags' : FAILED_TO_CREATE
             }, data ? 200 : 400);
       }
   })
@@ -177,7 +146,7 @@ const update = (req, res, next) => {
 
     data.updated = new Date();
 
-    Blog.update({
+    Tag.update({
         id,
         body: data,
         result: (err, data) => {
@@ -188,7 +157,7 @@ const update = (req, res, next) => {
 
             else Global.success(res, {
                 data,
-                message: 'Sucessfully updated blogs'
+                message: 'Sucessfully updated tags'
             }, 200);
         }
     })
@@ -199,7 +168,7 @@ const update = (req, res, next) => {
 const remove = (req,res,next) => {
     let id = req.params.id;
 
-    Blog.delete({
+    Tag.delete({
         id,
         result : (err,data)=> {
             if (err) Global.fail(res, {
@@ -209,11 +178,13 @@ const remove = (req,res,next) => {
 
             else Global.success(res, {
                 data,
-                message: 'Sucessfully deleted blogs'
+                message: 'Sucessfully deleted tags'
             }, 200)
         }
     });
 }
+
+
 
 module.exports = {
     index,

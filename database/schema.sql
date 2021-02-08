@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS roles (
   `deleted` DATETIME DEFAULT NULL
 );
 
+
 CREATE TABLE IF NOT EXISTS users (
   `id` VARCHAR(64) NOT NULL PRIMARY KEY,
   `role_id` VARCHAR(64) NULL,
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS blogs (
   `image` LONGTEXT NOT NULL,
   `content` LONGTEXT NOT NULL,
   `author_id` VARCHAR(64) NOT NULL,
+  `tag_id` VARCHAR(64) NOT NULL,
   `isFeatured` BOOLEAN DEFAULT false,
   `isAvailable` BOOLEAN DEFAULT false,
   `created` DATETIME  NULL,
@@ -49,3 +51,10 @@ CREATE TABLE IF NOT EXISTS images (
   `deleted` DATETIME  NULL
 );
 
+CREATE TABLE IF NOT EXISTS tags (
+  `id` VARCHAR(64) NOT NULL PRIMARY KEY,
+  `tag` VARCHAR(100) NOT NULL,
+  `created` DATETIME DEFAULT NULL,
+  `updated` DATETIME DEFAULT NULL,
+  `deleted` DATETIME DEFAULT NULL
+);

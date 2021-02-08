@@ -36,6 +36,12 @@ const login = (req,res,next)=> {
                 message: FAILED_FETCH,
                 context: err
             }, 500);
+
+            if(!user.length) return Global.fail(res, {
+                message: 'Invalid credentials!',
+                context: INV_INPUT
+            
+            }, 500);
             
             bcrypt.compare(data.password, user[0].password, (fail, success) => {
 

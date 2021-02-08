@@ -12,12 +12,20 @@ Blog.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
             blog.title, \
             blog.excerpt, \
             blog.content, \
+            blog.isAvailable, \
+            blog.isFeatured, \
+            blog.image, \
+            tag.tag, \
+            user.first_name, \
+            user.last_name, \
             blog.created, \
             blog.updated, \
             blog.deleted \
             FROM blogs blog  \
             LEFT JOIN users user \
             ON user.id = blog.author_id \
+            LEFT JOIN  tags tag
+            ON tag.id = blog.tag_id
             ${where} ${offset}`;
     console.log('FETCH ALL',fetchAll)
     let [err,blog] = await Global.exe(db.build(query).promise());
@@ -47,7 +55,17 @@ Blog.count = async ({ where = '', offset = '', result }) => {
 };
 
 Blog.show = async ({id,where,result}) => {
-    let query = `SELECT * FROM blogs where id = '${id}'`;
+    let query = `SELECT \
+    blog.*, \
+    tag.tag, \
+    user.first_name, \
+    user.last_name
+    FROM blogs blog  \
+    LEFT JOIN users user \
+    ON user.id = blog.author_id \
+    LEFT JOIN  tags tag
+            ON tag.id = blog.tag_id
+    WHERE blog.id = '${id}'`;
 
     let [err,blog] = await Global.exe(db.build(query).promise());
 

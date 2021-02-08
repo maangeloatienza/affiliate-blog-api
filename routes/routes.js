@@ -16,7 +16,7 @@ router.put ('/users/:id',   authorization,  __.userController.update);
 router.delete('/users/:id', authorization,  __.userController.remove);
 
 router.get ('/images',                      __.imageController.index);
-router.get ('/images/:id',                   __.imageController.show);
+router.get ('/images/:id',                  __.imageController.show);
 router.post('/images',upload.single('file'),__.imageController.store);
 router.put ('/images/:id',upload.single('file'), __.imageController.update);
 router.delete('/images/:id', authorization, __.imageController.remove);
@@ -26,6 +26,12 @@ router.get ('/blogs/:id',                   __.blogController.show);
 router.post('/blogs',                       __.blogController.store);
 router.put ('/blogs/:id',   authorization,  __.blogController.update);
 router.delete('/blogs/:id', authorization,  __.blogController.remove);
+
+router.get ('/tags',                       __.tagController.index);
+router.get ('/tags/:id',                   __.tagController.show);
+router.post('/tags',                       __.tagController.store);
+router.put ('/tags/:id',   authorization,  __.tagController.update);
+router.delete('/tags/:id', authorization,  __.tagController.remove);
 
 router.post('/login', __.authenticationController.login);
 
