@@ -41,7 +41,7 @@ Blog.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
 };
 
 Blog.count = async ({ where = '', offset = '', result }) => {
-    let query = `SELECT COUNT(*) AS total FROM blogs blog ${where} ${offset}`;
+    let query = `SELECT COUNT(*) AS total FROM blogs blog ${where}`;
 
     let [err, blog] = await Global.exe(db.build(query).promise());
     if (err) {

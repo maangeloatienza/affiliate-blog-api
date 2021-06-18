@@ -40,8 +40,8 @@ User.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
     
 };
 
-User.count = async ({ where = '', offset = '', result }) => {
-    let query = `SELECT COUNT(*) AS total FROM users user ${where} ${offset}`;
+User.count = async ({ where = '',  result }) => {
+    let query = `SELECT COUNT(*) AS total FROM users user ${where}`;
 
     let [err, user] = await Global.exe(db.build(query).promise());
     if (err) {

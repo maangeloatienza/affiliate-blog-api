@@ -28,8 +28,8 @@ Tag.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
     
 };
 
-Tag.count = async ({ where = '', offset = '', result }) => {
-    let query = `SELECT COUNT(*) AS total FROM tags tag ${where} ${offset}`;
+Tag.count = async ({ where = '', result }) => {
+    let query = `SELECT COUNT(*) AS total FROM tags tag ${where}`;
     console.log(query)
     let [err, tag] = await Global.exe(db.build(query).promise());
     if (err) {

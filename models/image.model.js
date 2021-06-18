@@ -29,8 +29,8 @@ Image.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
     
 };
 
-Image.count = async ({ where = '', offset = '', result }) => {
-    let query = `SELECT COUNT(*) AS total FROM images image ${where} ${offset}`;
+Image.count = async ({ where = '', result }) => {
+    let query = `SELECT COUNT(*) AS total FROM images image ${where}`;
 
     let [err, image] = await Global.exe(db.build(query).promise());
     if (err) {
