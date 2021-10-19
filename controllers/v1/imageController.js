@@ -3,10 +3,11 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const util = require('./../../utils/util');
 const Global = require('./../../global_functions');
+const fs = require('fs');
+const AWS = require('aws-sdk');
 
 const Blog = require('./../../models/blog.model');
 const Image = require('./../../models/image.model');
-
 
 require('dotenv').config();
 require('./../../misc/response_codes');
@@ -16,23 +17,28 @@ const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier')
 
 cloudinary.config({
-  cloud_name  : process.env.CLOUD_NAME,
-  api_key     : process.env.API_KEY,
-  api_secret  : process.env.API_SECRET
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
 const reqBody = {
-  name: '',
-  _image: ''
+    name: '',
+    _image: ''
 };
 
 const optBody = {
-  _name: ''
+    _name: ''
 };
 
 
 
-const index = (req,res,next)=> {
+const index = (req, res, next) => {
 
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -56,7 +62,7 @@ const index = (req,res,next)=> {
         where += `
             OR  image.name LIKE '%${search}%' \
         `;
-  }
+    }
 
     if (search) {
         where += `
@@ -65,13 +71,13 @@ const index = (req,res,next)=> {
         `;
     }
 
-    
+
     let count = 0;
 
     Image.count({
         where,
         offset,
-        result : (err,data) => {
+        result: (err, data) => {
             count = data;
         }
     });
@@ -79,10 +85,10 @@ const index = (req,res,next)=> {
     Image.index({
         where,
         offset,
-        result: (err, data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_FETCH,
-                context : err
+                context: err
             }, 500);
 
             Global.success(res, {
@@ -98,7 +104,7 @@ const index = (req,res,next)=> {
 
 const show = (req, res, next) => {
     let id = req.params.id;
-    
+
     Blog.show({
         id,
         result: (err, data) => {
@@ -109,70 +115,98 @@ const show = (req, res, next) => {
             else Global.success(res, {
                 data,
                 message: data ? 'Sucessfully retrieved users' : NO_RESULTS
-            }, data?200:404);
+            }, data ? 200 : 404);
         }
     });
 }
 
-const store = async (req,res,next) => {
+const store = async (req, res, next) => {
     const data =
         util._get
             .form_data(reqBody)
             .from(req.body);
-    let file = '';
+    let file = [];
+    let uploadData = [];
+    let files = req.files;
+    let bucket = process.env.AWS_BUCKET_NAME;
 
-    if(data instanceof Error){
-        return Global.fail(res,{
+    if (data instanceof Error) {
+        return Global.fail(res, {
             message: INV_INPUT,
             context: data.message
-        },500);
+        }, 500);
     }
-
+    console.log(files)
 
     data.id = uuidv4();
     data.created = new Date();
 
-    if(req.file){
-
-        file = req.file.path
-        // let revFile = file.replace(/\/\//g, "$1")
-        let revFile = `${req.file.destination}${req.file.filename}`
-        console.log(revFile)
-        let temp_holder = await cloudinary.uploader.upload(
-            revFile,
-            {
-                public_id : revFile,
-                tags : 'uploads'
-            },
-            (error,image)=>{
-                if(error){
-                    return Global.fail(res,{
-                        message : "Error uploading to cloudinary",
-                        context : error
-                    },500);
+    files.map(file => {
+        let fileName = `${file.destination}${file.filename}`
+        if (file.size > (1024 * 1024 * 10)) {
+            return Global.fail(res, {
+                message: 'File is to large to upload.',
+                context: 'FILE TOO LARGE'
+            }, 500)
+        }
+        if (
+            file.mimetype === "image/jpeg" ||
+            file.mimetype === "image/pjpeg" ||
+            file.mimetype === "image/png") {
+            fs.readFile(fileName, (err, data) => {
+                if (err) {
+                    Global.fail(res, {
+                        context: err
+                    }, 500);
                 }
 
-                return image;
+                let params = {
+                    Bucket: bucket,
+                    Key: file.originalname,
+                    Body: data,
+                    ContentType: file.mimetype
+                };
 
-            }
-        );
+                let putObjectPromise = s3.upload(params).promise();
+                putObjectPromise.then(function (data) {
+                    if (data) {
+                        uploadData.push({
+                            name: file.originalname,
+                            // s3Res: data,
+                            image: data.Location
+                        })
+                        if (uploadData.length === files.length) {
+                            Image.store({
+                                body: uploadData,
+                                result: (err, data) => {
+                                    if (err) Global.fail(res, {
+                                        message: FAILED_TO_CREATE
+                                    }, 500);
 
-    data.image = temp_holder? temp_holder.url : null;
-    }
+                                    else Global.success(res, {
+                                        uploadData,
+                                        message: uploadData ? 'Sucessfully created blog' : FAILED_TO_CREATE
+                                    }, data ? 200 : 400);
+                                }
+                            })
+                        }
+                    }
+                }).catch(function (s3Err) {
+                    return Global.fail(res, {
+                        message: FAILED_TO_CREATE,
+                        context: s3Err
+                    }, 500);
+                });
+            })
+        } else {
+            return Global.fail(res, {
+                message: 'File type not supported!',
+                context: 'NOT SUPPORTED'
+            }, 500)
+        }
 
-    Image.store({
-      body: data,
-      result: (err, data)=> {
-          if (err) Global.fail(res, {
-              message: FAILED_TO_CREATE
-          }, 500);
+    })
 
-          else Global.success(res, {
-              data,
-              message: data ? 'Sucessfully created blog' : FAILED_TO_CREATE
-          }, data ? 200 : 400);
-      }
-  })
 }
 
 const update = (req, res, next) => {
@@ -209,15 +243,15 @@ const update = (req, res, next) => {
         }
     })
 
-    
+
 }
 
-const remove = (req,res,next) => {
+const remove = (req, res, next) => {
     let id = req.params.id;
 
     User.delete({
         id,
-        result : (err,data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_TO_DELETE,
                 context: err

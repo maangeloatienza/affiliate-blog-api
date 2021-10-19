@@ -11,6 +11,7 @@ const reqBody = {
     username: '',
     first_name: '',
     last_name: '',
+    _role_id: '',
     email: '',
     password: '',
 };
@@ -19,13 +20,14 @@ const optBody = {
     _username: '',
     _first_name: '',
     _last_name: '',
+    _role_id: '',
     _email: '',
     _password: ''
 };
 
 
 
-const index = (req,res,next)=> {
+const index = (req, res, next) => {
 
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -61,13 +63,13 @@ const index = (req,res,next)=> {
             AND role.name = '${role}'
         `;
     }
-    
+
     let count = 0;
 
     User.count({
         where,
         offset,
-        result : (err,data) => {
+        result: (err, data) => {
             count = data;
         }
     });
@@ -75,10 +77,10 @@ const index = (req,res,next)=> {
     User.index({
         where,
         offset,
-        result: (err, data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_FETCH,
-                context : err
+                context: err
             }, 500);
 
             Global.success(res, {
@@ -94,7 +96,7 @@ const index = (req,res,next)=> {
 
 const show = (req, res, next) => {
     let id = req.params.id;
-    
+
     User.show({
         id,
         result: (err, data) => {
@@ -105,42 +107,42 @@ const show = (req, res, next) => {
             else Global.success(res, {
                 data,
                 message: data ? 'Sucessfully retrieved users' : NO_RESULTS
-            }, data?200:404);
+            }, data ? 200 : 404);
         }
     });
 }
 
-const store = (req,res,next) => {
+const store = (req, res, next) => {
     const data =
         util._get
             .form_data(reqBody)
             .from(req.body);
 
-    if(data instanceof Error){
-        Global.fail(res,{
+    if (data instanceof Error) {
+        Global.fail(res, {
             message: INV_INPUT,
             context: INV_INPUT
-        },500);
+        }, 500);
     }
 
     data.id = uuidv4();
     data.created = new Date();
 
-    bcrypt.genSalt(10, (error, salt)=> {
-        bcrypt.hash(data.password, salt, (fail, hash)=> {
+    bcrypt.genSalt(10, (error, salt) => {
+        bcrypt.hash(data.password, salt, (fail, hash) => {
             data.password = hash;
 
 
-            if(fail) {
-                Global.fail(res,{
+            if (fail) {
+                Global.fail(res, {
                     message: FAILED_TO_CREATE,
-                    context : fail
-                },500);
+                    context: fail
+                }, 500);
             }
 
             User.store({
                 body: data,
-                result: (err, data)=> {
+                result: (err, data) => {
                     if (err) Global.fail(res, {
                         message: FAILED_TO_CREATE
                     }, 500);
@@ -151,7 +153,7 @@ const store = (req,res,next) => {
                     }, data ? 200 : 400);
                 }
             })
-           
+
         });
     });
 }
@@ -173,7 +175,7 @@ const update = (req, res, next) => {
 
     data.updated = new Date();
 
-    if(data.password){
+    if (data.password) {
         bcrypt.genSalt(10, (error, salt) => {
             bcrypt.hash(data.password, salt, (fail, hash) => {
                 data.password = hash;
@@ -197,7 +199,7 @@ const update = (req, res, next) => {
                         else Global.success(res, {
                             data,
                             message: data ? 'Sucessfully created user' : FAILED_TO_CREATE
-                        }, 200 );
+                        }, 200);
                     }
                 })
 
@@ -222,15 +224,15 @@ const update = (req, res, next) => {
         }
     })
 
-    
+
 }
 
-const remove = (req,res,next) => {
+const remove = (req, res, next) => {
     let id = req.params.id;
 
     User.delete({
         id,
-        result : (err,data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_TO_DELETE,
                 context: err

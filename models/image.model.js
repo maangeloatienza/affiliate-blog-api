@@ -2,11 +2,11 @@ const db = require('anytv-node-mysql');
 const Global = require('./../global_functions');
 
 
-const Image = function(image){
+const Image = function (image) {
     this.image = image;
 };
 
-Image.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
+Image.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
     let query = `SELECT \
             image.id, \
             image.name, \
@@ -16,17 +16,17 @@ Image.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
             image.deleted \
             FROM images image  \
             ${where} ${offset}`;
-    console.log('FETCH ALL',fetchAll)
-    let [err,image] = await Global.exe(db.build(query).promise());
-    if(err){
-        console.log(`IMAGE MODEL ERROR: `,err);
-        result(err,null);
+    console.log('FETCH ALL', fetchAll)
+    let [err, image] = await Global.exe(db.build(query).promise());
+    if (err) {
+        console.log(`IMAGE MODEL ERROR: `, err);
+        result(err, null);
         return;
     }
-    
-    console.log(`BLOG DATA : `,image);
+
+    console.log(`BLOG DATA : `, image);
     result(null, image);
-    
+
 };
 
 Image.count = async ({ where = '', offset = '', result }) => {
@@ -43,10 +43,10 @@ Image.count = async ({ where = '', offset = '', result }) => {
     result(null, image[0].total);
 };
 
-Image.show = async ({id,where,result}) => {
+Image.show = async ({ id, where, result }) => {
     let query = `SELECT * FROM images where id = '${id}'`;
 
-    let [err,image] = await Global.exe(db.build(query).promise());
+    let [err, image] = await Global.exe(db.build(query).promise());
 
     if (err) {
         console.log(`BLOG MODEL ERROR: `, err);
@@ -56,26 +56,26 @@ Image.show = async ({id,where,result}) => {
 
     console.log(`IMAGE DATA : `, image[0]);
     result(null, image[0]);
-}   
+}
 
-Image.store = async ({body,result}) => {
+Image.store = async ({ body, result }) => {
     let query = `INSERT INTO images SET ?`;
 
-    let [err,image] = await Global.exe(db.build(query,body).promise());
+    let [err, image] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
         console.log(`IMAGE MODEL ERROR: `, err);
         result(err, null);
         return;
     }
-    
 
-    console.log(`IMAGE DATA : `,{
+
+    console.log(`IMAGE DATA : `, {
         id: image.insertId,
         ...body
     });
     result(null, {
-        id : image.insertId,
+        id: image.insertId,
         ...body
     });
 };
@@ -83,7 +83,7 @@ Image.store = async ({body,result}) => {
 Image.update = async ({ id, body, result }) => {
     let query = `UPDATE  images  SET ? where id = '${id}'`;
 
-    let [err, image] = await Global.exe(db.build(query,body).promise());
+    let [err, image] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
         console.log(`USER MODEL ERROR: `, err);
@@ -100,7 +100,7 @@ Image.update = async ({ id, body, result }) => {
         id: id,
         ...body
     });
-} 
+}
 
 Image.delete = async ({ id, result }) => {
     let query = `DELETE FROM images where id = '${id}'`;
@@ -117,7 +117,7 @@ Image.delete = async ({ id, result }) => {
         id
     });
     result(null, {
-        id : id
+        id: id
     });
 }
 
