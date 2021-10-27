@@ -8,11 +8,11 @@ const Role = require('./../../models/role.model');
 require('./../../misc/response_codes');
 
 const reqBody = {
-  role: ''
+  name: ''
 };
 
 const optBody = {
-  _role: ''
+  _name: ''
 };
 
 
