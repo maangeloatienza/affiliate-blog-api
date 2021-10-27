@@ -17,7 +17,7 @@ Image.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             image.deleted \
             FROM images image  \
             ${where} ${offset}`;
-    console.log('FETCH ALL', fetchAll)
+    console.log(query)
     let [err, image] = await Global.exe(db.build(query).promise());
     if (err) {
         console.log(`IMAGE MODEL ERROR: `, err);
@@ -25,7 +25,6 @@ Image.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
         return;
     }
 
-    console.log(`BLOG DATA : `, image);
     result(null, image);
 
 };
@@ -60,6 +59,7 @@ Image.show = async ({ id, where, result }) => {
 }
 
 Image.store = async ({ body, result }) => {
+    console.log('BODYYYY', result)
     let query = `INSERT INTO images SET ?`;
 
     let [err, image] = await Global.exe(db.build(query, body).promise());

@@ -105,7 +105,7 @@ const index = (req, res, next) => {
 const show = (req, res, next) => {
     let id = req.params.id;
 
-    Blog.show({
+    Image.show({
         id,
         result: (err, data) => {
             if (err) Global.fail(res, {
@@ -121,7 +121,7 @@ const show = (req, res, next) => {
 }
 
 const store = async (req, res, next) => {
-    const data =
+    const body =
         util._get
             .form_data(reqBody)
             .from(req.body);
@@ -130,19 +130,19 @@ const store = async (req, res, next) => {
     let files = req.files;
     let bucket = process.env.AWS_BUCKET_NAME;
 
-    if (data instanceof Error) {
+    if (body instanceof Error) {
         return Global.fail(res, {
             message: INV_INPUT,
             context: data.message
         }, 500);
     }
-    console.log(files)
 
-    data.id = uuidv4();
-    data.created = new Date();
+
 
     files.map(file => {
         let fileName = `${file.destination}${file.filename}`
+        console.log(file)
+
         if (file.size > (1024 * 1024 * 10)) {
             return Global.fail(res, {
                 message: 'File is to large to upload.',
@@ -168,16 +168,23 @@ const store = async (req, res, next) => {
                 };
 
                 let putObjectPromise = s3.upload(params).promise();
-                putObjectPromise.then(function (data) {
-                    if (data) {
+                putObjectPromise.then(function (response) {
+                    if (response) {
                         uploadData.push({
                             name: file.originalname,
                             // s3Res: data,
-                            image: data.Location
+                            image: response.Location
                         })
+                        body.id = uuidv4();
+                        body.created = new Date();
+                        body.name = file.originalname
+                        body.image = response.Location
+
                         if (uploadData.length === files.length) {
+                            console.log(body)
+
                             Image.store({
-                                body: uploadData,
+                                body: body,
                                 result: (err, data) => {
                                     if (err) Global.fail(res, {
                                         message: FAILED_TO_CREATE
