@@ -11,6 +11,7 @@ Image.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             image.id, \
             image.name, \
             image.image, \
+            image.showcase, \
             image.created, \
             image.updated, \
             image.deleted \
