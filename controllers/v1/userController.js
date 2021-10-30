@@ -9,8 +9,8 @@ require('./../../misc/response_codes');
 
 const reqBody = {
     username: '',
-    first_name: '',
-    last_name: '',
+    // first_name: '',
+    // last_name: '',
     _role_id: '',
     email: '',
     password: '',
@@ -18,8 +18,8 @@ const reqBody = {
 
 const optBody = {
     _username: '',
-    _first_name: '',
-    _last_name: '',
+    // _first_name: '',
+    // _last_name: '',
     _role_id: '',
     _email: '',
     _password: ''

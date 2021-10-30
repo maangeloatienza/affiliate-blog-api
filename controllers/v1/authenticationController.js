@@ -6,17 +6,17 @@ const User = require('./../../models/user.model');
 require('./../../misc/response_codes');
 
 const reqBody = {
-    username : '',
-    password : ''
+    username: '',
+    password: ''
 }
 
-const login = (req,res,next)=> {
+const login = (req, res, next) => {
     const data =
         util._get
             .form_data(reqBody)
             .from(req.body);
 
-    if(data instanceof Error){
+    if (data instanceof Error) {
         Global.fail(res, {
             message: INV_INPUT,
             context: INV_INPUT
@@ -28,21 +28,21 @@ const login = (req,res,next)=> {
     `;
 
     User.index({
-        fetchAll : true,
+        fetchAll: true,
         where,
-        result : (err,user)=>{
-            
+        result: (err, user) => {
+
             if (err) Global.fail(res, {
                 message: FAILED_FETCH,
                 context: err
             }, 500);
 
-            if(!user.length) return Global.fail(res, {
+            if (!user.length) return Global.fail(res, {
                 message: 'Invalid credentials!',
                 context: INV_INPUT
-            
+
             }, 500);
-            
+
             bcrypt.compare(data.password, user[0].password, (fail, success) => {
 
                 if (fail) {
@@ -63,8 +63,8 @@ const login = (req,res,next)=> {
                 if (success) {
                     const token = jwt.sign({
                         id: user[0].id,
-                        first_name: user[0].first_name,
-                        last_name: user[0].last_name,
+                        // first_name: user[0].first_name,
+                        // last_name: user[0].last_name,
                         username: user[0].username,
                         role: {
                             id: user[0].role_id,
@@ -78,8 +78,8 @@ const login = (req,res,next)=> {
                     Global.success(res, {
                         data: {
                             id: user[0].id,
-                            first_name: user[0].first_name,
-                            last_name: user[0].last_name,
+                            // first_name: user[0].first_name,
+                            // last_name: user[0].last_name,
                             username: user[0].username,
                             email: user[0].email,
                             role: {

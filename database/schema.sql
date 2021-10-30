@@ -67,3 +67,8 @@ CREATE TABLE IF NOT EXISTS carousel (
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
 );
+
+-- 10-30-2021
+-- remove first_name and last_name
+ALTER TABLE users DROP COLUMN first_name;
+ALTER TABLE users DROP COLUMN last_name;

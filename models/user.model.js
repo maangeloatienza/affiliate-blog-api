@@ -2,15 +2,13 @@ const db = require('anytv-node-mysql');
 const Global = require('./../global_functions');
 
 
-const User = function(user){
+const User = function (user) {
     this.user = user;
 };
 
-User.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
+User.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
     let query = `SELECT \
             user.id AS id, \
-            first_name,\
-            last_name, \
             username, \
             password, \
             email, \
@@ -21,23 +19,23 @@ User.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
             LEFT JOIN roles role \
             ON role.id = user.role_id \
             ${where} ${offset}`;
-    console.log('FETCH ALL',fetchAll)
-    let [err,user] = await Global.exe(db.build(query).promise());
-    if(err){
-        console.log(`USER MODEL ERROR: `,err);
-        result(err,null);
+    console.log('FETCH ALL', fetchAll)
+    let [err, user] = await Global.exe(db.build(query).promise());
+    if (err) {
+        console.log(`USER MODEL ERROR: `, err);
+        result(err, null);
         return;
     }
 
-    if(!fetchAll) {
+    if (!fetchAll) {
         for (let key in user) {
             delete user[key].password;
         }
     }
-    
-    console.log(`USER DATA : `,user);
+
+    console.log(`USER DATA : `, user);
     result(null, user);
-    
+
 };
 
 User.count = async ({ where = '', offset = '', result }) => {
@@ -54,10 +52,10 @@ User.count = async ({ where = '', offset = '', result }) => {
     result(null, user[0].total);
 };
 
-User.show = async ({id,where,result}) => {
+User.show = async ({ id, where, result }) => {
     let query = `SELECT * FROM users where id = '${id}'`;
 
-    let [err,user] = await Global.exe(db.build(query).promise());
+    let [err, user] = await Global.exe(db.build(query).promise());
 
     if (err) {
         console.log(`USER MODEL ERROR: `, err);
@@ -67,27 +65,27 @@ User.show = async ({id,where,result}) => {
 
     console.log(`USER DATA : `, user[0]);
     result(null, user[0]);
-}   
+}
 
-User.store = async ({body,result}) => {
+User.store = async ({ body, result }) => {
     let query = `INSERT INTO users SET ?`;
 
-    let [err,user] = await Global.exe(db.build(query,body).promise());
+    let [err, user] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
         console.log(`USER MODEL ERROR: `, err);
         result(err, null);
         return;
     }
-    
+
     delete body.password;
 
-    console.log(`USER DATA : `,{
+    console.log(`USER DATA : `, {
         id: user.insertId,
         ...body
     });
     result(null, {
-        id : user.insertId,
+        id: user.insertId,
         ...body
     });
 };
@@ -95,7 +93,7 @@ User.store = async ({body,result}) => {
 User.update = async ({ id, body, result }) => {
     let query = `UPDATE  users  SET ? where id = '${id}'`;
 
-    let [err, user] = await Global.exe(db.build(query,body).promise());
+    let [err, user] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
         console.log(`USER MODEL ERROR: `, err);
@@ -113,7 +111,7 @@ User.update = async ({ id, body, result }) => {
         id: id,
         ...body
     });
-} 
+}
 
 User.delete = async ({ id, result }) => {
     let query = `DELETE FROM users where id = '${id}'`;
@@ -130,7 +128,7 @@ User.delete = async ({ id, result }) => {
         id
     });
     result(null, {
-        id : id
+        id: id
     });
 }
 
