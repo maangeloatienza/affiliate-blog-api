@@ -34,8 +34,6 @@ const index = (req, res, next) => {
     const offset = `LIMIT ${(page - 1) * limit}, ${limit}`;
     const {
         username,
-        first_name,
-        last_name,
         search,
         sort_desc,
         sort_id,
