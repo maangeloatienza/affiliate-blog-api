@@ -9,8 +9,8 @@ require('./../../misc/response_codes');
 
 const reqBody = {
     username: '',
-    // first_name: '',
-    // last_name: '',
+    first_name: '',
+    last_name: '',
     _role_id: '',
     email: '',
     password: '',
@@ -18,8 +18,8 @@ const reqBody = {
 
 const optBody = {
     _username: '',
-    // _first_name: '',
-    // _last_name: '',
+    _first_name: '',
+    _last_name: '',
     _role_id: '',
     _email: '',
     _password: ''
@@ -34,6 +34,8 @@ const index = (req, res, next) => {
     const offset = `LIMIT ${(page - 1) * limit}, ${limit}`;
     const {
         username,
+        first_name,
+        last_name,
         search,
         sort_desc,
         sort_id,
@@ -53,6 +55,17 @@ const index = (req, res, next) => {
             AND first_name LIKE '%${search}%' \
             OR last_name LIKE '%${search}%' \
             OR username LIKE '%${search}%' \
+        `;
+    }
+    if (first_name) {
+        where += `
+            AND user.first_name = '${first_name}'
+        `;
+    }
+
+    if (last_name) {
+        where += `
+            AND user.last_name = '${last_name}'
         `;
     }
 

@@ -63,8 +63,8 @@ const login = (req, res, next) => {
                 if (success) {
                     const token = jwt.sign({
                         id: user[0].id,
-                        // first_name: user[0].first_name,
-                        // last_name: user[0].last_name,
+                        first_name: user[0].first_name,
+                        last_name: user[0].last_name,
                         username: user[0].username,
                         role: {
                             id: user[0].role_id,
@@ -78,8 +78,8 @@ const login = (req, res, next) => {
                     Global.success(res, {
                         data: {
                             id: user[0].id,
-                            // first_name: user[0].first_name,
-                            // last_name: user[0].last_name,
+                            first_name: user[0].first_name,
+                            last_name: user[0].last_name,
                             username: user[0].username,
                             email: user[0].email,
                             role: {

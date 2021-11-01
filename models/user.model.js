@@ -10,6 +10,8 @@ User.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
     let query = `SELECT \
             user.id AS id, \
             username, \
+            first_name, \
+            last_name, \
             password, \
             email, \
             user.created, \
