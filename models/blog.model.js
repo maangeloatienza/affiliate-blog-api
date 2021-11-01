@@ -16,8 +16,10 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             blog.isFeatured, \
             blog.image, \
             tag.tag, \
-            user.role_id,
-            role.name,
+            user.role_id,\
+            user.first_name, \
+            user.last_name, \
+            role.name, \
             blog.created, \
             blog.updated, \
             blog.deleted \
