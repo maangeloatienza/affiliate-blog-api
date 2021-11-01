@@ -8,28 +8,28 @@ const Blog = require('./../../models/blog.model');
 require('./../../misc/response_codes');
 
 const reqBody = {
-  title: '',
-  excerpt : '',
-  image: '',
-  tag_id: '',
-  content: '',
-  author_id: '',
-  isAvailable: 0,
-  isFeatured : 0
-};
- 
-const optBody = {
-  _title: '',
-  _excerpt : '',
-  _image: '',
-  _tag_id: '',
-  _content: '',
-  _author_id: '',
-  _isAvailable: 0,
-  _isFeatured : 0
+    title: '',
+    excerpt: '',
+    _image: '',
+    tag_id: '',
+    content: '',
+    author_id: '',
+    isAvailable: 0,
+    isFeatured: 0
 };
 
-const index = (req,res,next)=> {
+const optBody = {
+    _title: '',
+    _excerpt: '',
+    _image: '',
+    _tag_id: '',
+    _content: '',
+    _author_id: '',
+    _isAvailable: 0,
+    _isFeatured: 0
+};
+
+const index = (req, res, next) => {
 
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -80,13 +80,13 @@ const index = (req,res,next)=> {
         `;
     }
 
-    
+
     let count = 0;
 
     Blog.count({
         where,
         offset,
-        result : (err,data) => {
+        result: (err, data) => {
             count = data;
         }
     });
@@ -94,10 +94,10 @@ const index = (req,res,next)=> {
     Blog.index({
         where,
         offset,
-        result: (err, data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_FETCH,
-                context : err
+                context: err
             }, 500);
 
             Global.success(res, {
@@ -113,7 +113,7 @@ const index = (req,res,next)=> {
 
 const show = (req, res, next) => {
     let id = req.params.id;
-    
+
     Blog.show({
         id,
         result: (err, data) => {
@@ -124,30 +124,30 @@ const show = (req, res, next) => {
             else Global.success(res, {
                 data,
                 message: data ? 'Sucessfully retrieved blogs' : NO_RESULTS
-            }, data?200:404);
+            }, data ? 200 : 404);
         }
     });
 }
 
-const store = (req,res,next) => {
+const store = (req, res, next) => {
     const data =
         util._get
             .form_data(reqBody)
             .from(req.body);
 
-    if(data instanceof Error){
-        return Global.fail(res,{
+    if (data instanceof Error) {
+        return Global.fail(res, {
             message: INV_INPUT,
             context: data.message
-        },500);
+        }, 500);
     }
 
     data.id = uuidv4();
     data.created = new Date();
 
     Blog.store({
-      body: data,
-      result: (err, data)=> {
+        body: data,
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_TO_CREATE
             }, 500);
@@ -156,8 +156,8 @@ const store = (req,res,next) => {
                 data,
                 message: data ? 'Sucessfully created blogs' : FAILED_TO_CREATE
             }, data ? 200 : 400);
-      }
-  })
+        }
+    })
 }
 
 const update = (req, res, next) => {
@@ -193,15 +193,15 @@ const update = (req, res, next) => {
         }
     })
 
-    
+
 }
 
-const remove = (req,res,next) => {
+const remove = (req, res, next) => {
     let id = req.params.id;
 
     Blog.delete({
         id,
-        result : (err,data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_TO_DELETE,
                 context: err

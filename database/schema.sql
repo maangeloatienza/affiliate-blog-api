@@ -72,3 +72,5 @@ CREATE TABLE IF NOT EXISTS carousel (
 -- remove first_name and last_name
 ALTER TABLE users ADD COLUMN first_name VARCHAR(50);
 ALTER TABLE users ADD COLUMN last_name VARCHAR(50);
+
+ALTER TABLE blogs MODIFY COLUMN image LONGTEXT  NULL;
