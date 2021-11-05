@@ -13,7 +13,6 @@ const reqBody = {
     _image: '',
     tag_id: '',
     content: '',
-    author_id: '',
     isAvailable: 0,
     isFeatured: 0
 };
@@ -144,6 +143,7 @@ const store = (req, res, next) => {
 
     data.id = uuidv4();
     data.created = new Date();
+    data.author_id = req.user.id
 
     Blog.store({
         body: data,

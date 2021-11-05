@@ -23,7 +23,7 @@ router.delete('/images/:id', authorization, __.imageController.remove);
 
 router.get('/news', __.blogController.index);
 router.get('/news/:id', __.blogController.show);
-router.post('/news', __.blogController.store);
+router.post('/news', authorization, __.blogController.store);
 router.put('/news/:id', authorization, __.blogController.update);
 router.delete('/news/:id', authorization, __.blogController.remove);
 
