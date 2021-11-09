@@ -15,7 +15,7 @@ const login = (req, res, next) => {
         util._get
             .form_data(reqBody)
             .from(req.body);
-
+    console.log(data)
     if (data instanceof Error) {
         Global.fail(res, {
             message: INV_INPUT,
@@ -44,6 +44,7 @@ const login = (req, res, next) => {
             }, 500);
 
             bcrypt.compare(data.password, user[0].password, (fail, success) => {
+                console.log(data.password, user[0].passowrd)
 
                 if (fail) {
                     return Global.fail(res, {

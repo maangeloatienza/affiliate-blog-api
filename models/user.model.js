@@ -16,6 +16,8 @@ User.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             email, \
             user.created, \
             user.updated, \
+            user.role_id, \
+            role.name AS role, \
             user.deleted \
             FROM users user  \
             LEFT JOIN roles role \
