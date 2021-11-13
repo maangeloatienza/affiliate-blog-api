@@ -31,7 +31,7 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             LEFT JOIN  tags tag
             ON tag.id = blog.tag_id
             ${where} ${offset}`;
-    console.log('FETCH ALL', fetchAll)
+    console.log('FETCH ALL', query)
     let [err, blog] = await Global.exe(db.build(query).promise());
     if (err) {
         console.log(`BLOG MODEL ERROR: `, err);

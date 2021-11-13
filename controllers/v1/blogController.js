@@ -66,7 +66,7 @@ const index = (req, res, next) => {
 
     if (tag) {
         where += `
-            AND tag.tag IS ${tag}
+            AND tag.tag = '${tag}'
         `
     }
 
