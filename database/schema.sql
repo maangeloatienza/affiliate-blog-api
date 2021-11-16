@@ -78,11 +78,13 @@ ALTER TABLE blogs MODIFY COLUMN image LONGTEXT  NULL;
 -- 11-12-2021
 -- Add a new table to handle tag items
 
-CREATE TABLE IF NOT EXISTS tag_items {
+CREATE TABLE IF NOT EXISTS types (
   `id` VARCHAR(64) NOT NULL PRIMARY KEY,
-  `tag_id` VARCHAR(64) NOT NULL,
-  `news_id` VARCHAR(64) NOT NULL,
+  `name` VARCHAR(64) NOT NULL,
   `created` DATETIME DEFAULT NULL,
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
-}
+)
+
+ALTER TABLE blogs ADD COLUMN type_id VARCHAR(64);
+ALTER TABLE blogs ADD COLUMN tag_id VARCHAR(64);

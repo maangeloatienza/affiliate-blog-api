@@ -15,7 +15,9 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             blog.isAvailable, \
             blog.isFeatured, \
             blog.image, \
+            blog.type_id, \
             tag.tag, \
+            type.name AS type,\
             user.role_id,\
             user.first_name, \
             user.last_name, \
@@ -30,6 +32,8 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             ON role.id = user.role_id
             LEFT JOIN  tags tag
             ON tag.id = blog.tag_id
+            LEFT JOIN types type
+            ON type.id = blog.type_id
             ${where} ${offset}`;
     console.log('FETCH ALL', query)
     let [err, blog] = await Global.exe(db.build(query).promise());
@@ -65,6 +69,7 @@ Blog.show = async ({ id, where, result }) => {
     user.first_name, \
     user.last_name, \
     user.role_id, \
+    type.name AS type, \
     role.name \
     FROM blogs blog  \
     LEFT JOIN users user \
@@ -73,6 +78,8 @@ Blog.show = async ({ id, where, result }) => {
     ON role.id = user.role_id \
     LEFT JOIN  tags tag \
     ON tag.id = blog.tag_id \
+    LEFT JOIN types type \
+    ON type.id = blog.type_id \
     WHERE blog.id = '${id}'`;
 
     let [err, blog] = await Global.exe(db.build(query).promise());

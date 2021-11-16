@@ -40,6 +40,12 @@ router.post('/tags', __.tagController.store);
 router.put('/tags/:id', authorization, __.tagController.update);
 router.delete('/tags/:id', authorization, __.tagController.remove);
 
+router.get('/types', __.typeController.index);
+router.get('/types/:id', __.typeController.show);
+router.post('/types', __.typeController.store);
+router.put('/types/:id', authorization, __.typeController.update);
+router.delete('/types/:id', authorization, __.typeController.remove);
+
 router.get('/roles', __.roleController.index);
 router.get('/roles/:id', __.roleController.show);
 router.post('/roles', __.roleController.store);

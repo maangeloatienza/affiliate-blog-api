@@ -1,20 +1,18 @@
 const db = require('anytv-node-mysql');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
-const util = require('./../../utils/util');
-const Global = require('./../../global_functions');
-const TagItem = require('./../../models/tag_item.model');
+const util = require('../../utils/util');
+const Global = require('../../global_functions');
+const Type = require('../../models/type.model');
 
-require('./../../misc/response_codes');
+require('../../misc/response_codes');
 
 const reqBody = {
-  tag_id: '',
-  news_id: ''
+  name: ''
 };
 
 const optBody = {
-  _tag: '',
-  _news_id: ''
+  _name: ''
 };
 
 
@@ -25,13 +23,13 @@ const index = (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = `LIMIT ${(page - 1) * limit}, ${limit}`;
   const {
-    tag,
+    name,
     search,
     sort_id,
     sort_desc
   } = req.query;
 
-  let where = ` WHERE tagItems.deleted IS null  `;
+  let where = ` WHERE type.deleted IS null  `;
 
   if (sort_id) {
     where += `
@@ -39,22 +37,22 @@ const index = (req, res, next) => {
         `;
   }
 
-  if (tag) {
+  if (name) {
     where += `
-            AND tag.tag LIKE '%${tag}%' \
+            AND type.name LIKE '%${name}%' \
         `
   }
 
   if (search) {
     where += `
-            AND tag.tag LIKE '%${search}%' \
+            AND type.name LIKE '%${search}%' \
         `;
   }
 
 
   let count = 0;
 
-  Tag.count({
+  Type.count({
     where,
     offset,
     result: (err, data) => {
@@ -62,7 +60,7 @@ const index = (req, res, next) => {
     }
   });
 
-  Tag.index({
+  Type.index({
     where,
     offset,
     result: (err, data) => {
@@ -76,7 +74,7 @@ const index = (req, res, next) => {
         count,
         page,
         limit,
-        message: data.length ? 'Sucessfully retrieved tags' : NO_RESULTS
+        message: data.length ? 'Sucessfully retrieved types' : NO_RESULTS
       }, data.length ? 200 : 404);
     }
   });
@@ -85,7 +83,7 @@ const index = (req, res, next) => {
 const show = (req, res, next) => {
   let id = req.params.id;
 
-  Tag.show({
+  Type.show({
     id,
     result: (err, data) => {
       if (err) Global.fail(res, {
@@ -94,7 +92,7 @@ const show = (req, res, next) => {
 
       else Global.success(res, {
         data,
-        message: data ? 'Sucessfully retrieved tags' : NO_RESULTS
+        message: data ? 'Sucessfully retrieved types' : NO_RESULTS
       }, data ? 200 : 404);
     }
   });
@@ -116,7 +114,7 @@ const store = (req, res, next) => {
   data.id = uuidv4();
   data.created = new Date();
 
-  Tag.store({
+  Type.store({
     body: data,
     result: (err, data) => {
       if (err) Global.fail(res, {
@@ -148,7 +146,7 @@ const update = (req, res, next) => {
 
   data.updated = new Date();
 
-  Tag.update({
+  Type.update({
     id,
     body: data,
     result: (err, data) => {
@@ -170,7 +168,7 @@ const update = (req, res, next) => {
 const remove = (req, res, next) => {
   let id = req.params.id;
 
-  Tag.delete({
+  Type.delete({
     id,
     result: (err, data) => {
       if (err) Global.fail(res, {
@@ -180,7 +178,7 @@ const remove = (req, res, next) => {
 
       else Global.success(res, {
         data,
-        message: 'Sucessfully deleted tags'
+        message: 'Sucessfully deleted type'
       }, 200)
     }
   });

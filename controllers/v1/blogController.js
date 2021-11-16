@@ -12,6 +12,7 @@ const reqBody = {
     excerpt: '',
     _image: '',
     tag_id: '',
+    type_id: '',
     content: '',
     isAvailable: 0,
     isFeatured: 0
@@ -22,6 +23,7 @@ const optBody = {
     _excerpt: '',
     _image: '',
     _tag_id: '',
+    _type_id: '',
     _content: '',
     _author_id: '',
     _isAvailable: 0,
@@ -37,6 +39,7 @@ const index = (req, res, next) => {
         title,
         author,
         tag,
+        type,
         isAvailable,
         isFeatured,
         search,
@@ -67,6 +70,18 @@ const index = (req, res, next) => {
     if (tag) {
         where += `
             AND tag.tag = '${tag}'
+        `
+    }
+
+    if (type) {
+        where += `
+            AND type.name = '${type}'
+        `
+    }
+
+    if (title) {
+        where += `
+            AND blog.title = '${title}'
         `
     }
 
