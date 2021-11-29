@@ -101,7 +101,7 @@ Role.update = async ({ id, body, result }) => {
 }
 
 Role.delete = async ({ id, result }) => {
-  let query = `DELETE FROM roles where id = '${id}'`;
+  let query = `UPDATE FROM roles SET deleted = NOW() WHERE id = '${id}'`;
   console.log(query)
   let [err, role] = await Global.exe(db.build(query).promise());
 

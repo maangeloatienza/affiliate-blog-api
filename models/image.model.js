@@ -104,7 +104,7 @@ Image.update = async ({ id, body, result }) => {
 }
 
 Image.delete = async ({ id, result }) => {
-    let query = `DELETE FROM images where id = '${id}'`;
+    let query = `UPDATE FROM images SET delete = NOW() WHERE id = '${id}'`;
     console.log(query)
     let [err, blog] = await Global.exe(db.build(query).promise());
 

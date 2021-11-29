@@ -118,7 +118,7 @@ User.update = async ({ id, body, result }) => {
 }
 
 User.delete = async ({ id, result }) => {
-    let query = `DELETE FROM users where id = '${id}'`;
+    let query = `UPDATE FROM users SET deleted = NOW() WHERE id = '${id}'`;
     console.log(query)
     let [err, user] = await Global.exe(db.build(query).promise());
 

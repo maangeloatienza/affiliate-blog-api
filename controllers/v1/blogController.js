@@ -67,6 +67,13 @@ const index = (req, res, next) => {
         `
     }
 
+    if (author) {
+        where += `
+            AND user.first_name LIKE '%${author}%'
+            OR user.last_name LIKE '%${author}%'
+        `
+    }
+
     if (tag) {
         where += `
             AND tag.tag = '${tag}'
@@ -88,8 +95,6 @@ const index = (req, res, next) => {
     if (search) {
         where += `
             AND blog.title LIKE '%${search}%' \
-            OR  user.first_name LIKE '%${search}%' \
-            OR  user.last_name LIKE '%${search}%' \
             OR  tag.tag LIKE '%${search}%' \
         `;
     }
@@ -104,7 +109,6 @@ const index = (req, res, next) => {
             count = data;
         }
     });
-
     Blog.index({
         where,
         offset,

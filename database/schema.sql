@@ -88,3 +88,26 @@ CREATE TABLE IF NOT EXISTS types (
 
 ALTER TABLE blogs ADD COLUMN type_id VARCHAR(64);
 ALTER TABLE blogs ADD COLUMN tag_id VARCHAR(64);
+
+-- 11-29-2021
+-- Added comments and likes for blog post
+
+CREATE TABLE IF NOT EXISTS comments (
+  `id` VARCHAR(64) NOT NULL PRIMARY KEY,
+  `content` LONGTEXT NOT NULL,
+  `blog_id` VARCHAR(64) NOT NULL,
+  `user_id` VARCHAR(64) NOT NULL,
+  `created` DATETIME DEFAULT NULL,
+  `updated` DATETIME DEFAULT NULL,
+  `deleted` DATETIME DEFAULT NULL
+)
+
+CREATE TABLE IF NOT EXISTS likes (
+  `id` VARCHAR(64) NOT NULL PRIMARY KEY,
+  `is_like` BOOLEAN NOT NULL DEFAULT false,
+  `blog_id` VARCHAR(64) NOT NULL,
+  `user_id` VARCHAR(64) NOT NULL,
+  `created` DATETIME DEFAULT NULL,
+  `updated` DATETIME DEFAULT NULL,
+  `deleted` DATETIME DEFAULT NULL
+)

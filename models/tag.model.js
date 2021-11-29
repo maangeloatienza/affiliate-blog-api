@@ -2,11 +2,11 @@ const db = require('anytv-node-mysql');
 const Global = require('./../global_functions');
 
 
-const Tag = function(tag){
+const Tag = function (tag) {
     this.tag = tag;
 };
 
-Tag.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
+Tag.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
     let query = `SELECT \
             tag.id, \
             tag.tag, \
@@ -15,17 +15,17 @@ Tag.index = async ({fetchAll = false ,where = '', offset = '', result }) => {
             tag.deleted \
             FROM tags tag  \
             ${where} ${offset}`;
-    console.log('FETCH ALL',fetchAll)
-    let [err,tag] = await Global.exe(db.build(query).promise());
-    if(err){
-        console.log(`TAG MODEL ERROR: `,err);
-        result(err,null);
+    console.log('FETCH ALL', fetchAll)
+    let [err, tag] = await Global.exe(db.build(query).promise());
+    if (err) {
+        console.log(`TAG MODEL ERROR: `, err);
+        result(err, null);
         return;
     }
-    
-    console.log(`TAG DATA : `,tag);
+
+    console.log(`TAG DATA : `, tag);
     result(null, tag);
-    
+
 };
 
 Tag.count = async ({ where = '', offset = '', result }) => {
@@ -42,10 +42,10 @@ Tag.count = async ({ where = '', offset = '', result }) => {
     result(null, tag[0].total);
 };
 
-Tag.show = async ({id,where,result}) => {
+Tag.show = async ({ id, where, result }) => {
     let query = `SELECT * FROM tags where id = '${id}'`;
 
-    let [err,tag] = await Global.exe(db.build(query).promise());
+    let [err, tag] = await Global.exe(db.build(query).promise());
 
     if (err) {
         console.log(`TAG MODEL ERROR: `, err);
@@ -55,12 +55,12 @@ Tag.show = async ({id,where,result}) => {
 
     console.log(`TAG DATA : `, tag[0]);
     result(null, tag[0]);
-}   
+}
 
-Tag.store = async ({body,result}) => {
+Tag.store = async ({ body, result }) => {
     let query = `INSERT INTO tags SET ?`;
 
-    let [err,tag] = await Global.exe(db.build(query,body).promise());
+    let [err, tag] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
         console.log(`TAG MODEL ERROR: `, err);
@@ -68,12 +68,12 @@ Tag.store = async ({body,result}) => {
         return;
     }
 
-    console.log(`TAG DATA : `,{
+    console.log(`TAG DATA : `, {
         id: tag.insertId,
         ...body
     });
     result(null, {
-        id : tag.insertId,
+        id: tag.insertId,
         ...body
     });
 };
@@ -81,7 +81,7 @@ Tag.store = async ({body,result}) => {
 Tag.update = async ({ id, body, result }) => {
     let query = `UPDATE  tags  SET ? where id = '${id}'`;
 
-    let [err, tag] = await Global.exe(db.build(query,body).promise());
+    let [err, tag] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
         console.log(`TAG MODEL ERROR: `, err);
@@ -98,10 +98,10 @@ Tag.update = async ({ id, body, result }) => {
         id: id,
         ...body
     });
-} 
+}
 
 Tag.delete = async ({ id, result }) => {
-    let query = `DELETE FROM tags where id = '${id}'`;
+    let query = `UPDATE FROM tags SET deleted = NOW() WHERE id = '${id}'`;
     console.log(query)
     let [err, tag] = await Global.exe(db.build(query).promise());
 
@@ -115,7 +115,7 @@ Tag.delete = async ({ id, result }) => {
         id
     });
     result(null, {
-        id : id
+        id: id
     });
 }
 
