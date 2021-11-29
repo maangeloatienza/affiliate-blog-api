@@ -43,14 +43,14 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
         return;
     }
 
-    console.log(`BLOG DATA : `, blog);
+    console.log(`BLOG DATA : `, blog.length);
     result(null, blog);
 
 };
 
 Blog.count = async ({ where = '', offset = '', result }) => {
-    let query = `SELECT COUNT(*) AS total FROM blogs blog ${where} ${offset}`;
-
+    let query = `SELECT COUNT(*) AS total FROM blogs blog ${where}`;
+    console.log(query)
     let [err, blog] = await Global.exe(db.build(query).promise());
     if (err) {
         console.log(`BLOG MODEL ERROR: `, err);

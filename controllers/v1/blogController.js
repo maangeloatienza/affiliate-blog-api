@@ -102,13 +102,7 @@ const index = (req, res, next) => {
 
     let count = 0;
 
-    Blog.count({
-        where,
-        offset,
-        result: (err, data) => {
-            count = data;
-        }
-    });
+
     Blog.index({
         where,
         offset,
@@ -118,13 +112,23 @@ const index = (req, res, next) => {
                 context: err
             }, 500);
 
-            Global.success(res, {
-                data,
-                count,
-                page,
-                limit,
-                message: data.length ? 'Sucessfully retrieved blog posts' : NO_RESULTS
-            }, data.length ? 200 : 404);
+            Blog.count({
+                where,
+                offset,
+                result: (err, total) => {
+                    count = total;
+
+                    Global.success(res, {
+                        data,
+                        count,
+                        page,
+                        limit,
+                        message: data.length ? 'Sucessfully retrieved blog posts' : NO_RESULTS
+                    }, data.length ? 200 : 404);
+                }
+            });
+
+
         }
     });
 }
