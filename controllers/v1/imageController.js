@@ -28,12 +28,13 @@ const s3 = new AWS.S3({
 });
 
 const reqBody = {
-    name: '',
+    _name: '',
     _image: ''
 };
 
 const optBody = {
-    _name: ''
+    _name: '',
+    _image: ''
 };
 
 
@@ -133,7 +134,7 @@ const store = async (req, res, next) => {
     if (body instanceof Error) {
         return Global.fail(res, {
             message: INV_INPUT,
-            context: data.message
+            context: body.message
         }, 500);
     }
 
