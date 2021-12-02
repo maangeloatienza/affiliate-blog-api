@@ -97,7 +97,7 @@ Carousel.update = async ({ id, body, result }) => {
 }
 
 Carousel.delete = async ({ id, result }) => {
-  let query = `UPDATE FROM carousel SET deleted = NOW() where id = '${id}'`;
+  let query = `UPDATE carousel SET deleted = NOW() where id = '${id}'`;
   console.log(query)
   let [err, carousel] = await Global.exe(db.build(query).promise());
 

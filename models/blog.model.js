@@ -152,7 +152,7 @@ Blog.update = async ({ id, body, result }) => {
 }
 
 Blog.delete = async ({ id, result }) => {
-    let query = `UPDATE FROM blogs SET deleted = NOW() WHERE id = '${id}'`;
+    let query = `UPDATE blogs SET deleted = NOW() WHERE id = '${id}'`;
     console.log(query)
     let [err, blog] = await Global.exe(db.build(query).promise());
 

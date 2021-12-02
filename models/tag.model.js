@@ -101,7 +101,7 @@ Tag.update = async ({ id, body, result }) => {
 }
 
 Tag.delete = async ({ id, result }) => {
-    let query = `UPDATE FROM tags SET deleted = NOW() WHERE id = '${id}'`;
+    let query = `UPDATE tags SET deleted = NOW() WHERE id = '${id}'`;
     console.log(query)
     let [err, tag] = await Global.exe(db.build(query).promise());
 
