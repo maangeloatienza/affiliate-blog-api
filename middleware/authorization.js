@@ -1,6 +1,6 @@
 
-const Global =  require('./../global_functions');
-const jwt  = require('jsonwebtoken');
+const Global = require('./../global_functions');
+const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     try {
@@ -9,7 +9,6 @@ module.exports = (req, res, next) => {
 
         req.user = decoded;
         req.user.token = token;
-
         next();
 
     } catch (error) {

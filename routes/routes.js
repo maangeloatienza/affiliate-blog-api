@@ -5,14 +5,21 @@ const router = express.Router();
 
 
 const authorization = require('./../middleware/authorization');
+const { checkRoles } = require('./../middleware/access-control');
+const { route } = require('express/lib/application');
 const __ = importer.dirloadSync(__dirname + '/../controllers/v1');
 const upload = multer({ dest: 'uploads/' });
+
+const middleware = {
+  checkRoles,
+  authorization
+}
 
 
 router.get('/users', __.userController.index);
 router.get('/users/:id', __.userController.show);
 router.post('/users', __.userController.store);
-router.put('/users/:id', authorization, __.userController.update);
+router.put('/users/:id', [authorization], __.userController.update);
 router.delete('/users/:id', authorization, __.userController.remove);
 
 router.get('/images', __.imageController.index);
@@ -23,34 +30,37 @@ router.delete('/images/:id', authorization, __.imageController.remove);
 
 router.get('/news', __.blogController.index);
 router.get('/news/:id', __.blogController.show);
-router.post('/news', authorization, __.blogController.store);
-router.put('/news/:id', authorization, __.blogController.update);
-router.delete('/news/:id', authorization, __.blogController.remove);
+router.post('/news', [authorization, checkRoles('content')], __.blogController.store);
+router.put('/news/:id', [authorization, checkRoles('content')], __.blogController.update);
+router.delete('/news/:id', [authorization, checkRoles('content')], __.blogController.remove);
 
 router.get('/carousel', __.carouselController.index);
 router.get('/carousel/:id', __.carouselController.show);
 router.post('/carousel', __.carouselController.store);
-router.put('/carousel/:id', authorization, __.carouselController.update);
-router.delete('/carousel/:id', authorization, __.carouselController.remove);
+router.put('/carousel/:id', [authorization], __.carouselController.update);
+router.delete('/carousel/:id', [authorization], __.carouselController.remove);
 
 
 router.get('/tags', __.tagController.index);
 router.get('/tags/:id', __.tagController.show);
 router.post('/tags', __.tagController.store);
-router.put('/tags/:id', authorization, __.tagController.update);
-router.delete('/tags/:id', authorization, __.tagController.remove);
+router.put('/tags/:id', [authorization], __.tagController.update);
+router.delete('/tags/:id', [authorization], __.tagController.remove);
 
 router.get('/types', __.typeController.index);
 router.get('/types/:id', __.typeController.show);
 router.post('/types', __.typeController.store);
-router.put('/types/:id', authorization, __.typeController.update);
-router.delete('/types/:id', authorization, __.typeController.remove);
+router.put('/types/:id', [authorization], __.typeController.update);
+router.delete('/types/:id', [authorization], __.typeController.remove);
 
 router.get('/roles', __.roleController.index);
 router.get('/roles/:id', __.roleController.show);
 router.post('/roles', __.roleController.store);
-router.put('/roles/:id', authorization, __.roleController.update);
-router.delete('/roles/:id', authorization, __.roleController.remove);
+router.put('/roles/:id', [authorization], __.roleController.update);
+router.delete('/roles/:id', [authorization], __.roleController.remove);
+
+router.get('/access-control-list', [authorization], __.accessControlController.index);
+router.post('/access-control-list', [authorization], __.accessControlController.store);
 
 router.post('/login', __.authenticationController.login);
 

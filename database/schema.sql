@@ -111,3 +111,17 @@ CREATE TABLE IF NOT EXISTS likes (
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
 )
+
+-- 12-03-2021
+-- Add access control list
+CREATE TABLE IF NOT EXISTS access_control_list (
+  `id` VARCHAR(64) NOT NULL PRIMARY KEY,
+  `role_id` VARCHAR(64) NOT NULL,
+  `api_group` VARCHAR(100) NOT NULL,  
+  `isRead` BOOLEAN DEFAULT true,
+  `isWrite` BOOLEAN DEFAULT false,
+  `created` DATETIME DEFAULT NULL,
+  `updated` DATETIME DEFAULT NULL,
+  `deleted` DATETIME DEFAULT NULL
+)
+
