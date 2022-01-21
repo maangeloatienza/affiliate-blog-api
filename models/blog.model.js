@@ -20,9 +20,9 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             tag.tag AS tag, \
             type.name AS type,\
             user.role_id,\
+            role.name as role, \
             user.first_name, \
             user.last_name, \
-            role.name, \
             blog.created, \
             blog.updated, \
             blog.deleted \
@@ -120,7 +120,7 @@ Blog.store = async ({ body, result }) => {
     }
 
 
-    console.log(`USER DATA : `, {
+    console.log(`BLOG DATA : `, {
         id: blog.insertId,
         ...body
     });
@@ -136,12 +136,12 @@ Blog.update = async ({ id, body, result }) => {
     let [err, blog] = await Global.exe(db.build(query, body).promise());
 
     if (err) {
-        console.log(`USER MODEL ERROR: `, err);
+        console.log(`BLOG MODEL ERROR: `, err);
         result(err, null);
         return;
     }
 
-    console.log(`USER UPDATED DATA: `, {
+    console.log(`BLOG UPDATED DATA: `, {
         id: id,
         ...body
     });

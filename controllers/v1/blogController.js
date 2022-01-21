@@ -11,11 +11,11 @@ const reqBody = {
     title: '',
     excerpt: '',
     _image: '',
-    tag_id: '',
-    type_id: '',
+    _tag_id: '',
+    _type_id: '',
     content: '',
-    isAvailable: 0,
-    isFeatured: 0
+    _isAvailable: true,
+    _isFeatured: true
 };
 
 const optBody = {
@@ -38,6 +38,7 @@ const index = (req, res, next) => {
     const {
         title,
         author,
+        authorId,
         tag,
         type,
         isAvailable,
@@ -47,7 +48,17 @@ const index = (req, res, next) => {
         sort_id
     } = req.query;
 
+    // const {
+    //     id
+    // } = req.user;
+
     let where = ` WHERE blog.deleted IS null  `;
+
+    if (authorId) {
+        where += `
+            AND blog.author_id = '${authorId}'
+        `
+    }
 
     if (sort_id) {
         where += `
@@ -156,7 +167,7 @@ const store = (req, res, next) => {
         util._get
             .form_data(reqBody)
             .from(req.body);
-
+    console.log(data)
     if (data instanceof Error) {
         return Global.fail(res, {
             message: INV_INPUT,

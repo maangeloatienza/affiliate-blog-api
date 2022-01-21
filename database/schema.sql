@@ -125,3 +125,13 @@ CREATE TABLE IF NOT EXISTS access_control_list (
   `deleted` DATETIME DEFAULT NULL
 )
 
+CREATE TABLE IF NOT EXISTS comment_replies (
+  `id` VARCHAR(64) NOT NULL PRIMARY KEY,
+  `content` LONGTEXT NOT NULL,
+  `comment_id` VARCHAR(64) NOT NULL,
+  `user_id` VARCHAR(64) NOT NULL,
+  `created` DATETIME DEFAULT NULL,
+  `updated` DATETIME DEFAULT NULL,
+  `deleted` DATETIME DEFAULT NULL
+)
+

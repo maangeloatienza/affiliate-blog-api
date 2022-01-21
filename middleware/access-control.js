@@ -1,14 +1,14 @@
 const db = require('anytv-node-mysql');
 const Global = require('./../global_functions');
 const AccessList = require('./../models/accessControlList.model')
-const Redis = require('redis');
-const redisClient = Redis.createClient();
+// const Redis = require('redis');
+// const redisClient = Redis.createClient();
 
 require('./../misc/response_codes');
 require('dotenv').config();
 
 
-const REDIS_EXPIRATION = process.env.REDIS_EXPIRATION || 3600;
+// const REDIS_EXPIRATION = process.env.REDIS_EXPIRATION || 3600;
 
 
 const checkRoles = (apiGroup) => {
@@ -44,8 +44,10 @@ const checkRoles = (apiGroup) => {
           })
         }
         console.log("apiGroup", apiGroup)
-        console.log("user", req.user)
+        console.log('isWrite', data[0].isWrite)
+        console.log('isRead', data[0].isRead)
         console.log("method", req.method)
+        console.log("user", req.user)
 
         if (data.length === 0) {
           Global.fail(res, {
@@ -54,11 +56,15 @@ const checkRoles = (apiGroup) => {
           })
         }
         else {
-          if (req.method === 'GET' && data.isRead === true) {
+          console.log("EXISTING")
+          if (req.method === 'GET' && data[0].isRead === 1) {
+            console.log("GET")
             next();
+
           }
 
-          else if (req.method === 'PUT' || req.method === 'POST' && data.isWrite === true) {
+          else if (req.method === 'PUT' || req.method === 'POST' && data[0].isWrite === 1) {
+            console.log("PUT POST");
             next();
           }
           else {
