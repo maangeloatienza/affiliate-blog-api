@@ -15,6 +15,7 @@ AccessList.index = async ({ fetchAll = false, where = '', offset = '', result })
       role.name,
       access.isRead,
       access.isWrite,
+      access.isRemove,
       access.created,
       access.updated,
       access.deleted
@@ -46,6 +47,7 @@ AccessList.show = async ({ id, where = '', result }) => {
       role.name,
       access.isRead,
       access.isWrite,
+      access.isRemove,
       access.created,
       access.updated,
       access.deleted

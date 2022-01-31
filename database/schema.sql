@@ -135,3 +135,5 @@ CREATE TABLE IF NOT EXISTS comment_replies (
   `deleted` DATETIME DEFAULT NULL
 )
 
+ALTER TABLE access_control_list
+ADD COLUMN `isRemove` BOOLEAN DEFAULT false;

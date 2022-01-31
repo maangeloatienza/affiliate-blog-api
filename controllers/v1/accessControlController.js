@@ -10,6 +10,7 @@ require('./../../misc/response_codes');
 const reqBody = {
   _isRead: true,
   _isWrite: false,
+  _isRemove: false,
   api_group: '',
   role_id: ''
 }
