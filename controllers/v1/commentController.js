@@ -64,11 +64,29 @@ const index = (req, res, next) => {
   })
 }
 
+const show = (req, res, next) => {
+  let id = req.params.id;
+
+  Comment.show({
+    id,
+    result: (err, data) => {
+      if (err) Global.fail(res, {
+        message: FAILED_FETCH
+      }, 500)
+
+      else Global.success(res, {
+        data,
+        message: data ? 'Sucessfully retrieved comments' : NO_RESULTS
+      }, data ? 200 : 404);
+    }
+  })
+}
+
 
 
 module.exports = {
   index,
-  // show,
+  show,
   // store,
   // update,
   // remove
