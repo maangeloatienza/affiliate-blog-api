@@ -55,9 +55,9 @@ router.delete('/types/:id', [authorization], __.typeController.remove);
 
 router.get('/roles', __.roleController.index);
 router.get('/roles/:id', __.roleController.show);
-router.post('/roles', __.roleController.store);
-router.put('/roles/:id', [authorization], __.roleController.update);
-router.delete('/roles/:id', [authorization], __.roleController.remove);
+router.post('/roles', [authorization, checkRoles('roles')], __.roleController.store);
+router.put('/roles/:id', [authorization, checkRoles('roles')], [authorization], __.roleController.update);
+router.delete('/roles/:id', [authorization, checkRoles('roles')], [authorization], __.roleController.remove);
 
 router.get('/access-control-list', [authorization], __.accessControlController.index);
 router.post('/access-control-list', [authorization], __.accessControlController.store);

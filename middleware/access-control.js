@@ -45,6 +45,7 @@ const checkRoles = (apiGroup) => {
         }
         console.log("apiGroup", apiGroup)
         console.log('isWrite', data[0].isWrite)
+        console.log('isWrite', data[0].isRemove)
         console.log('isRead', data[0].isRead)
         console.log("method", req.method)
         console.log("user", req.user)
@@ -64,6 +65,11 @@ const checkRoles = (apiGroup) => {
           }
 
           else if (req.method === 'PUT' || req.method === 'POST' && data[0].isWrite === 1) {
+            console.log("PUT POST");
+            next();
+          }
+
+          else if (req.method === 'DELETE' && data[0].isRemove === 1) {
             console.log("PUT POST");
             next();
           }
