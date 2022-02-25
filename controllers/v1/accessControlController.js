@@ -15,6 +15,14 @@ const reqBody = {
   role_id: ''
 }
 
+const optBody = {
+  _isRead: true,
+  _isWrite: false,
+  _isRemove: false,
+  _api_group: '',
+  _role_id: ''
+}
+
 const index = (req, res, next) => {
   const {
     api_group
@@ -47,9 +55,9 @@ const index = (req, res, next) => {
 
 const show = (req, res, next) => {
   const {
-    id,
     api_group
   } = req.query;
+  const id = req.params.id
 
   let where = ` WHERE access.deleted is NULL `;
 
@@ -116,6 +124,7 @@ const update = (req, res, next) => {
     util._get
       .form_data(optBody)
       .from(req.body);
+  const id = req.params.id;
 
   if (data instanceof Error) {
     Global.fail(res, {
@@ -123,8 +132,6 @@ const update = (req, res, next) => {
       context: INV_INPUT
     }, 500);
   }
-
-  const id = req.params.id;
 
   data.updated = new Date();
 

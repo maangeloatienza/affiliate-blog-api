@@ -58,9 +58,9 @@ AccessList.show = async ({ id, where = '', result }) => {
       roles role
     ON
       role.id = access.role_id
-    WHERE id = '${id}'
+    WHERE access.id = '${id}'
   `;
-
+  console.log(query)
   let [err, access] = await Global.exe(db.build(query).promise());
 
   if (err) {
