@@ -150,10 +150,7 @@ const update = (req, res, next) => {
       }, 200);
     }
   })
-
-
 }
-
 
 const remove = (req, res, next) => {
   let id = req.params.id;
@@ -174,10 +171,196 @@ const remove = (req, res, next) => {
   });
 }
 
+const generateAccessControl = async (req, res, next) => {
+  const data = [];
+  const rolesQuery = `SELECT * FROM roles WHERE deleted IS null`;
+
+  let [errRole, roles] = await Global.exe(db.build(rolesQuery).promise());
+
+  if (errRole) {
+    Global.fail(res, {
+      message: 'Failed to fetch roles',
+    }, 204)
+  }
+  if (roles.length) {
+    roles.map(async role => {
+
+      let id = role.id
+      let name = role.name
+      switch (name) {
+        case 'superadmin':
+          data.push(...data,
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'roles',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'content',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'access control',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'users',
+              role_id: id
+            }
+          )
+          break;
+        case 'admin':
+          data.push(...data,
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'roles',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'content',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'access control',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: true,
+              isRemove: true,
+              api_group: 'users',
+              role_id: id
+            }
+          )
+          break;
+        case 'read-only':
+          data.push(...data,
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'roles',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'content',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'access control',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'users',
+              role_id: id
+            }
+          )
+          break;
+        case 'common-user':
+          data.push(...data,
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'roles',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'content',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'access control',
+              role_id: id
+            },
+            {
+              id: uuidv4(),
+              isRead: true,
+              isWrite: false,
+              isRemove: false,
+              api_group: 'users',
+              role_id: id
+            }
+          )
+          break;
+        default:
+          data.push([])
+      }
+    })
+    console.log(data)
+    let accessQuery = `INSERT access_control_list SET ?`
+    let affectedRows = 0
+    data.map(async item => {
+      let [errAccess, access] = await Global.exe(db.build(accessQuery, item).promise())
+
+      if (errAccess) {
+        console.log(errAccess);
+      }
+      if (access[0].affectedRows) affectedRows += 1;
+    })
+
+    Global.success(res, {
+      data: affectedRows,
+      message: 'Successs',
+      context: 'Generation sucess'
+    }, 200)
+  }
+}
+
 module.exports = {
   index,
   show,
   store,
   update,
-  remove
+  remove,
+  generateAccessControl
 }

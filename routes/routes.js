@@ -20,7 +20,7 @@ router.get('/users', __.userController.index);
 router.get('/users/:id', __.userController.show);
 router.post('/users', __.userController.store);
 router.put('/users/:id', [authorization], __.userController.update);
-router.delete('/users/:id', authorization, __.userController.remove);
+router.delete('/users/:id', [authorization], __.userController.remove);
 
 router.get('/images', __.imageController.index);
 router.get('/images/:id', __.imageController.show);
@@ -55,15 +55,19 @@ router.delete('/types/:id', [authorization], __.typeController.remove);
 
 router.get('/roles', __.roleController.index);
 router.get('/roles/:id', __.roleController.show);
-router.post('/roles', [authorization, checkRoles('roles')], __.roleController.store);
+router.post('/roles', [authorization], __.roleController.store);
 router.put('/roles/:id', [authorization, checkRoles('roles')], [authorization], __.roleController.update);
 router.delete('/roles/:id', [authorization, checkRoles('roles')], [authorization], __.roleController.remove);
 
 router.get('/access-control-list', [authorization], __.accessControlController.index);
 router.get('/access-control-list/:id', [authorization], __.accessControlController.show);
-router.post('/access-control-list', [authorization], __.accessControlController.store);
-router.put('/access-control-list/:id', [authorization], __.accessControlController.update);
-router.delete('/access-control-list/:id', [authorization], __.accessControlController.remove);
+router.post('/access-control-list', [authorization, checkRoles('access control')], __.accessControlController.store);
+router.put('/access-control-list/:id', [authorization, checkRoles('access control')], __.accessControlController.update);
+router.delete('/access-control-list/:id', [authorization, checkRoles('access control')], __.accessControlController.remove);
+
+
+router.get('/generate/access-control-list', __.accessControlController.generateAccessControl);
+
 
 router.post('/login', __.authenticationController.login);
 
