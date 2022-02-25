@@ -88,5 +88,39 @@ AccessList.store = async ({ body, result }) => {
   });
 }
 
+AccessList.update = async ({ id, body, result }) => {
+  let query = `UPDATE access_control_list SET ? WHERE id = '${id}'`;
+
+  let [err, access] = await Global.exe(db.build(query, body).promise());
+  console.log(body)
+  if (err) {
+    console.log(`ACCESS CONTROL MODEL ERROR: `, err);
+    result(err, null);
+    return;
+  }
+
+  result(null, {
+    id: id,
+    ...body
+  });
+}
+
+AccessList.delete = async ({ id, result }) => {
+  let query = `UPDATE access_control_list SET deleted = NOW() WHERE id = '${id}'`;
+
+  let [err, access] = await Global.exe(db.build(query, body).promise());
+  console.log(body)
+  if (err) {
+    console.log(`ACCESS CONTROL MODEL ERROR: `, err);
+    result(err, null);
+    return;
+  }
+
+  result(null, {
+    id: id
+  });
+}
+
+
 
 module.exports = AccessList;

@@ -60,7 +60,10 @@ router.put('/roles/:id', [authorization, checkRoles('roles')], [authorization], 
 router.delete('/roles/:id', [authorization, checkRoles('roles')], [authorization], __.roleController.remove);
 
 router.get('/access-control-list', [authorization], __.accessControlController.index);
+router.get('/access-control-list/:id', [authorization], __.accessControlController.show);
 router.post('/access-control-list', [authorization], __.accessControlController.store);
+router.put('/access-control-list/:id', [authorization], __.accessControlController.update);
+router.delete('/access-control-list/:id', [authorization], __.accessControlController.remove);
 
 router.post('/login', __.authenticationController.login);
 

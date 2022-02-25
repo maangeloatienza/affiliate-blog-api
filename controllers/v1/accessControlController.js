@@ -110,8 +110,67 @@ const store = (req, res, next) => {
 
 }
 
+
+const update = (req, res, next) => {
+  const data =
+    util._get
+      .form_data(optBody)
+      .from(req.body);
+
+  if (data instanceof Error) {
+    Global.fail(res, {
+      message: INV_INPUT,
+      context: INV_INPUT
+    }, 500);
+  }
+
+  const id = req.params.id;
+
+  data.updated = new Date();
+
+  Access.update({
+    id,
+    body: data,
+    result: (err, data) => {
+      if (err) Global.fail(res, {
+        message: FAILED_TO_UPDATE,
+        context: err
+      }, 500);
+
+      else Global.success(res, {
+        data,
+        message: 'Sucessfully updated access control item'
+      }, 200);
+    }
+  })
+
+
+}
+
+
+const remove = (req, res, next) => {
+  let id = req.params.id;
+
+  Access.delete({
+    id,
+    result: (err, data) => {
+      if (err) Global.fail(res, {
+        message: FAILED_TO_DELETE,
+        context: err
+      }, 500);
+
+      else Global.success(res, {
+        data,
+        message: 'Sucessfully deleted access control item'
+      }, 200)
+    }
+  });
+}
+
 module.exports = {
   index,
   show,
-  store
+  store,
+  update,
+  remove
 }
