@@ -38,7 +38,7 @@ const index = (req, res, next) => {
     const {
         title,
         author,
-        authorId,
+        author_id,
         tag,
         type,
         isAvailable,
@@ -54,9 +54,9 @@ const index = (req, res, next) => {
 
     let where = ` WHERE blog.deleted IS null  `;
 
-    if (authorId) {
+    if (author_id) {
         where += `
-            AND blog.author_id = '${authorId}'
+            AND blog.author_id = '${author_id}'
         `
     }
 

@@ -105,6 +105,8 @@ const index = (req, res, next) => {
     });
 }
 
+
+
 const show = (req, res, next) => {
     let id = req.params.id;
 
@@ -135,38 +137,63 @@ const store = (req, res, next) => {
             context: INV_INPUT
         }, 500);
     }
+    let where = ` WHERE 
+                    user.deleted IS null 
+                AND 
+                    username='${data.username}' 
+                OR 
+                    email='${data.email}'`;
 
     data.id = uuidv4();
     data.created = new Date();
 
-    bcrypt.genSalt(10, (error, salt) => {
-        bcrypt.hash(data.password, salt, (fail, hash) => {
-            data.password = hash;
+    User.index({
+        where,
+        result: (err, data) => {
+            if (err) Global.fail(res, {
+                message: FAILED_FETCH,
+                context: err
+            }, 500);
 
-
-            if (fail) {
-                Global.fail(res, {
-                    message: FAILED_TO_CREATE,
-                    context: fail
-                }, 500);
+            if (data.length) {
+                return Global.fail(res, {
+                    message: 'Username/email already exists',
+                    context: ALREADY_EXISTS
+                }, 204)
             }
 
-            User.store({
-                body: data,
-                result: (err, data) => {
-                    if (err) Global.fail(res, {
-                        message: FAILED_TO_CREATE
-                    }, 500);
 
-                    else Global.success(res, {
-                        data,
-                        message: data ? 'Sucessfully created user' : FAILED_TO_CREATE
-                    }, data ? 200 : 400);
-                }
-            })
+            bcrypt.genSalt(10, (error, salt) => {
+                bcrypt.hash(data.password, salt, (fail, hash) => {
+                    data.password = hash;
 
-        });
+
+                    if (fail) {
+                        Global.fail(res, {
+                            message: FAILED_TO_CREATE,
+                            context: fail
+                        }, 500);
+                    }
+
+                    User.store({
+                        body: data,
+                        result: (err, data) => {
+                            if (err) Global.fail(res, {
+                                message: FAILED_TO_CREATE
+                            }, 500);
+
+                            else Global.success(res, {
+                                data,
+                                message: data ? 'Sucessfully created user' : FAILED_TO_CREATE
+                            }, data ? 200 : 400);
+                        }
+                    })
+
+                });
+            });
+        }
     });
+
 }
 
 const update = (req, res, next) => {
@@ -265,4 +292,5 @@ module.exports = {
     store,
     update,
     remove
+
 }

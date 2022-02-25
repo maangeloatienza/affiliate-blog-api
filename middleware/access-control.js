@@ -1,14 +1,9 @@
 const db = require('anytv-node-mysql');
 const Global = require('./../global_functions');
 const AccessList = require('./../models/accessControlList.model')
-// const Redis = require('redis');
-// const redisClient = Redis.createClient();
 
 require('./../misc/response_codes');
 require('dotenv').config();
-
-
-// const REDIS_EXPIRATION = process.env.REDIS_EXPIRATION || 3600;
 
 
 const checkRoles = (apiGroup) => {
@@ -43,12 +38,6 @@ const checkRoles = (apiGroup) => {
             context: err
           })
         }
-        console.log("apiGroup", apiGroup)
-        console.log('isWrite', data[0].isWrite)
-        console.log('isWrite', data[0].isRemove)
-        console.log('isRead', data[0].isRead)
-        console.log("method", req.method)
-        console.log("user", req.user)
 
         if (data.length === 0) {
           Global.fail(res, {

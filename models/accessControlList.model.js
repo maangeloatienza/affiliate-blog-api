@@ -29,7 +29,8 @@ AccessList.index = async ({ fetchAll = false, where = '', offset = '', result })
   `;
   console.log(query)
   let [err, access] = await Global.exe(db.build(query).promise());
-
+  console.log('error', err)
+  console.log('access', access)
   if (err) {
     result(err, null);
     return;

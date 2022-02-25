@@ -21,6 +21,7 @@ Blog.index = async ({ fetchAll = false, where = '', offset = '', result }) => {
             type.name AS type,\
             user.role_id,\
             role.name as role, \
+            user.username, \
             user.first_name, \
             user.last_name, \
             blog.created, \
