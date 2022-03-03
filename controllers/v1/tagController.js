@@ -8,16 +8,16 @@ const Tag = require('./../../models/tag.model');
 require('./../../misc/response_codes');
 
 const reqBody = {
-  tag: ''
+    tag: ''
 };
- 
+
 const optBody = {
-  _tag: ''
+    _tag: ''
 };
 
 
 
-const index = (req,res,next)=> {
+const index = (req, res, next) => {
 
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -49,25 +49,27 @@ const index = (req,res,next)=> {
         `;
     }
 
-    
+
     let count = 0;
 
-    Tag.count({
-        where,
-        offset,
-        result : (err,data) => {
-            count = data;
-        }
-    });
+
 
     Tag.index({
         where,
         offset,
-        result: (err, data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_FETCH,
-                context : err
+                context: err
             }, 500);
+
+            Tag.count({
+                where,
+                offset,
+                result: (err, total) => {
+                    count = total;
+                }
+            });
 
             Global.success(res, {
                 data,
@@ -82,7 +84,7 @@ const index = (req,res,next)=> {
 
 const show = (req, res, next) => {
     let id = req.params.id;
-    
+
     Tag.show({
         id,
         result: (err, data) => {
@@ -93,30 +95,30 @@ const show = (req, res, next) => {
             else Global.success(res, {
                 data,
                 message: data ? 'Sucessfully retrieved tags' : NO_RESULTS
-            }, data?200:404);
+            }, data ? 200 : 404);
         }
     });
 }
 
-const store = (req,res,next) => {
+const store = (req, res, next) => {
     const data =
         util._get
             .form_data(reqBody)
             .from(req.body);
 
-    if(data instanceof Error){
-        return Global.fail(res,{
+    if (data instanceof Error) {
+        return Global.fail(res, {
             message: INV_INPUT,
             context: data.message
-        },500);
+        }, 500);
     }
 
     data.id = uuidv4();
     data.created = new Date();
 
     Tag.store({
-      body: data,
-      result: (err, data)=> {
+        body: data,
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_TO_CREATE
             }, 500);
@@ -125,8 +127,8 @@ const store = (req,res,next) => {
                 data,
                 message: data ? 'Sucessfully created tags' : FAILED_TO_CREATE
             }, data ? 200 : 400);
-      }
-  })
+        }
+    })
 }
 
 const update = (req, res, next) => {
@@ -162,15 +164,15 @@ const update = (req, res, next) => {
         }
     })
 
-    
+
 }
 
-const remove = (req,res,next) => {
+const remove = (req, res, next) => {
     let id = req.params.id;
 
     Tag.delete({
         id,
-        result : (err,data)=> {
+        result: (err, data) => {
             if (err) Global.fail(res, {
                 message: FAILED_TO_DELETE,
                 context: err

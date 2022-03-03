@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS types (
   `created` DATETIME DEFAULT NULL,
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
-)
+);
 
 ALTER TABLE blogs ADD COLUMN type_id VARCHAR(64);
 ALTER TABLE blogs ADD COLUMN tag_id VARCHAR(64);
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS comments (
   `created` DATETIME DEFAULT NULL,
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS likes (
   `id` VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS likes (
   `created` DATETIME DEFAULT NULL,
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
-)
+);
 
 -- 12-03-2021
 -- Add access control list
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS access_control_list (
   `created` DATETIME DEFAULT NULL,
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS comment_replies (
   `id` VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS comment_replies (
   `created` DATETIME DEFAULT NULL,
   `updated` DATETIME DEFAULT NULL,
   `deleted` DATETIME DEFAULT NULL
-)
+);
 
 ALTER TABLE access_control_list
 ADD COLUMN `isRemove` BOOLEAN DEFAULT false;

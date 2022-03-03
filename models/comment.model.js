@@ -10,20 +10,27 @@ Comment.index = async ({ fetchAll = false, where = '', offset = '', result }) =>
   let query = `
     SELECT
       comment.id, \
-      comment.blog_id, AS blog_id, \
+      comment.blog_id AS blog_id, \
       comment.user_id AS user_id, \
-      comment.content AS content
+      comment.content AS content, \
+      user.id as user_id, \
+      user.first_name as first_name, \
+      user.last_name as last_name, \
+      user.username as username, \ 
+      user.email as email 
     FROM
       comments comment
     LEFT JOIN 
       blogs blog
     ON
       blog.id = comment.blog_id
-
+    LEFT JOIN
+      users user
+    ON
+      user.id = comment.user_id
     ${where}
     ${offset}
   `
-  console.log('QUERY: ', query);
 
   let [err, comment] = await Global.exe(db.build(query).promise());
 
@@ -33,7 +40,6 @@ Comment.index = async ({ fetchAll = false, where = '', offset = '', result }) =>
     return;
   }
 
-  console.log('COMMENT DATA', comment.length)
   return (null, comment)
 }
 
@@ -47,10 +53,8 @@ Comment.count = async ({ fetchAll = false, where = '', offset = '', result }) =>
       blogs blog \
     ON \
       blog.id = comment.blog_id \
-
     ${where}
   `
-  console.log('QUERY: ', query);
 
   let [err, comment] = await Global.exe(db.build(query).promise());
 
@@ -60,23 +64,30 @@ Comment.count = async ({ fetchAll = false, where = '', offset = '', result }) =>
     return;
   }
 
-  console.log('COMMENT DATA', comment.length)
   return (null, comment[0].total)
 }
 
 Comment.show = async ({ id, where, result }) => {
   let query = `
-    SELECT \
-      comment.id, \
-      comment.blog_id, AS blog_id, \
-      comment.user_id AS user_id, \
-      comment.content AS content \
-    FROM \
-      comments comment \
-    LEFT JOIN \
-      blogs blog \
-    ON \
-      blog.id = comment.blog_id \
+      SELECT
+        comment.id, \
+        comment.blog_id, AS blog_id, \
+        comment.user_id AS user_id, \
+        comment.content AS content, \
+        user.first_name as first_name, \
+        user.last_name as last_name, \
+        user.username as username, \ 
+        user.email as email 
+      FROM
+        comments comment
+      LEFT JOIN 
+        blogs blog
+      ON
+        blog.id = comment.blog_id
+      LEFT JOIN
+        users user
+      ON
+        user.id = comment.user_id
     WHERE comment.id = ${id}
   `
 

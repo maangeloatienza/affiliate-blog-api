@@ -9,24 +9,27 @@ require('./../../misc/response_codes');
 
 const reqBody = {
   content: '',
-  user_id: '',
+  _user_id: '',
   blog_id: ''
 }
 
 const optBody = {
-  _content: ''
+  _content: '',
+  _user_id: '',
+  _blog_id: ''
+
 }
 
 const index = (req, res, next) => {
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = `LIMIT ${(page - 1) * limit}, ${limit}`;
-
   const {
     sort_desc,
     sort_id
   } = req.query;
 
+  let where = ` WHERE comment.deleted IS null `;
 
   if (sort_id) {
     where += `
@@ -40,6 +43,8 @@ const index = (req, res, next) => {
     where,
     offset,
     result: (err, data) => {
+      console.log(data)
+      console.log(err)
       if (err) Global.fail(res, {
         message: FAILED_FETCH,
         context: err
@@ -48,7 +53,7 @@ const index = (req, res, next) => {
       Comment.count({
         where,
         offset,
-        result: (err, total) => {
+        result: (errCount, total) => {
           count = total;
 
           Global.success(res, {
@@ -82,12 +87,45 @@ const show = (req, res, next) => {
   })
 }
 
+const store = (req, res, next) => {
+  const data =
+    util._get
+      .form_data(reqBody)
+      .from(req.body);
+
+  if (data instanceof Error) {
+    return Global.fail(res, {
+      message: INV_INPUT,
+      context: data.message
+    }, 500);
+  }
+
+  data.id = uuidv4();
+  data.created = new Date();
+  data.user_id = req.user.id;
+
+  Comment.store({
+    body: data,
+    result: (err, data) => {
+      if (err) Global.fail(res, {
+        message: FAILED_TO_CREATE
+      }, 500);
+
+      else Global.success(res, {
+        data,
+        message: data ? 'Sucessfully created comment' : FAILED_TO_CREATE
+      }, data ? 200 : 400);
+    }
+
+  })
+}
+
 
 
 module.exports = {
   index,
   show,
-  // store,
+  store,
   // update,
   // remove
 }
