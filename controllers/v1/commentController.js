@@ -39,6 +39,7 @@ const index = (req, res, next) => {
 
   let count = 0;
 
+  console.log("INDEX COMMENT")
   Comment.index({
     where,
     offset,
@@ -120,12 +121,66 @@ const store = (req, res, next) => {
   })
 }
 
+const update = (req, res, next) => {
+  const data =
+    util._get
+      .form_data(optBody)
+      .from(req.body);
+
+  let id = req.params.id;
+
+  if (data instanceof Error) {
+    return Global.fail(res, {
+      message: INV_INPUT,
+      context: data.message
+    }, 500);
+  }
+
+  data.updated = new Date();
+
+  Comment.update({
+    id,
+    body: data,
+    result: (err, data) => {
+      if (err) Global.fail(res, {
+        message: FAILED_TO_UPDATE,
+        context: err
+      });
+
+      Global.success(res, {
+        data,
+        message: 'Successfully updated comment'
+      }, 200)
+    }
+  })
+}
+
+
+const remove = (req, res, next) => {
+  let id = req.params.id;
+
+  Comment.delete({
+    id,
+    result: (err, data) => {
+      if (err) Global.fail(res, {
+        message: FAILED_TO_DELETE,
+        context: err
+      })
+
+      else Global.success(res, {
+        data,
+        message: 'Successfully delete comment'
+      }, 200)
+    }
+  })
+}
+
 
 
 module.exports = {
   index,
   show,
   store,
-  // update,
-  // remove
+  update,
+  remove
 }

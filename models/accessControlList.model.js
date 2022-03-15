@@ -25,7 +25,8 @@ AccessList.index = async ({ fetchAll = false, where = '', offset = '', result })
       roles role
     ON
       role.id = access.role_id
-    ${where} ${offset}
+    ${where} 
+    ORDER BY role.name
   `;
   console.log(query)
   let [err, access] = await Global.exe(db.build(query).promise());

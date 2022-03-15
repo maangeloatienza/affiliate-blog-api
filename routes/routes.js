@@ -65,9 +65,11 @@ router.post('/access-control-list', [authorization, checkRoles('access control')
 router.put('/access-control-list/:id', [authorization, checkRoles('access control')], __.accessControlController.update);
 router.delete('/access-control-list/:id', [authorization, checkRoles('access control')], __.accessControlController.remove);
 
-router.get('/comments', [authorization], __.commentController.index);
+router.get('/comments', __.commentController.index);
 router.get('/comments/:id', [authorization], __.commentController.show);
 router.post('/comments', [authorization], __.commentController.store);
+router.put('/comments/:id', [authorization], __.commentController.update);
+router.delete('/comments/:id', [authorization], __.commentController.remove);
 
 router.get('/generate/access-control-list', __.accessControlController.generateAccessControl);
 

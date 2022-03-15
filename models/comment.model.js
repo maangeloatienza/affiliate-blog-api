@@ -33,14 +33,14 @@ Comment.index = async ({ fetchAll = false, where = '', offset = '', result }) =>
   `
 
   let [err, comment] = await Global.exe(db.build(query).promise());
-
+  console.log(query)
   if (err) {
     console.log('COMMENT MODEL ERROR', err);
     result(err, null);
     return;
   }
-
-  return (null, comment)
+  console.log("return content")
+  result(null, comment)
 }
 
 Comment.count = async ({ fetchAll = false, where = '', offset = '', result }) => {
@@ -64,14 +64,14 @@ Comment.count = async ({ fetchAll = false, where = '', offset = '', result }) =>
     return;
   }
 
-  return (null, comment[0].total)
+  result(null, comment[0].total)
 }
 
 Comment.show = async ({ id, where, result }) => {
   let query = `
       SELECT
         comment.id, \
-        comment.blog_id, AS blog_id, \
+        comment.blog_id AS blog_id, \
         comment.user_id AS user_id, \
         comment.content AS content, \
         user.first_name as first_name, \
@@ -88,9 +88,9 @@ Comment.show = async ({ id, where, result }) => {
         users user
       ON
         user.id = comment.user_id
-    WHERE comment.id = ${id}
+    WHERE comment.id = '${id}'
   `
-
+  console.log(query)
   let [err, comment] = await Global.exe(db.build(query).promise())
 
   if (err) {
@@ -148,7 +148,7 @@ Comment.update = async ({ id, body, result }) => {
 Comment.delete = async ({ id, result }) => {
   let query = `UPDATE comments SET deleted = NOW() WHERE id = '${id}'`;
 
-  let [err, comment] = await Global.exe(db.build(query, body).promise());
+  let [err, comment] = await Global.exe(db.build(query).promise());
 
   if (err) {
     console.log('COMMENT MODEL ERROR', err);
